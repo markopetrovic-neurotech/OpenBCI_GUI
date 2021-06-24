@@ -857,7 +857,7 @@ class ChannelBar {
                 .setPosition(_x, _y)
                 .setSize(_w, _h)
                 .setColorLabel(color(255))
-                .setColorForeground(OPENBCI_BLUE)
+                .setColorForeground(NEURO_TECH_BLACK)
                 .setColorBackground(color(144, 100))
                 .setImages(_default, _hover, _active)
                 ;

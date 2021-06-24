@@ -14,7 +14,7 @@ import java.nio.file.*;
 
 class TopNav {
 
-    private final color TOPNAV_DARKBLUE = OPENBCI_BLUE;
+    private final color TOPNAV_DARKBLUE = NEURO_TECH_BLACK;
     private final color SUBNAV_LIGHTBLUE = buttonsLightBlue;
     private color strokeColor = OPENBCI_DARKBLUE;
 
@@ -134,13 +134,13 @@ class TopNav {
             updateGuiVersionButton.textColorNotActive = OPENBCI_DARKBLUE;
             configButton.textColorNotActive = OPENBCI_DARKBLUE;
         } else if (colorScheme == COLOR_SCHEME_ALTERNATIVE_A) {
-            controlPanelCollapser.setColorNotPressed(OPENBCI_BLUE);
-            debugButton.setColorNotPressed(OPENBCI_BLUE);
-            //highRezButton.setColorNotPressed(OPENBCI_BLUE);
-            issuesButton.setColorNotPressed(OPENBCI_BLUE);
-            shopButton.setColorNotPressed(OPENBCI_BLUE);
-            tutorialsButton.setColorNotPressed(OPENBCI_BLUE);
-            updateGuiVersionButton.setColorNotPressed(OPENBCI_BLUE);
+            controlPanelCollapser.setColorNotPressed(NEURO_TECH_BLACK);
+            debugButton.setColorNotPressed(NEURO_TECH_BLACK);
+            //highRezButton.setColorNotPressed(NEURO_TECH_BLACK);
+            issuesButton.setColorNotPressed(NEURO_TECH_BLACK);
+            shopButton.setColorNotPressed(NEURO_TECH_BLACK);
+            tutorialsButton.setColorNotPressed(NEURO_TECH_BLACK);
+            updateGuiVersionButton.setColorNotPressed(NEURO_TECH_BLACK);
             configButton.setColorNotPressed(SUBNAV_LIGHTBLUE);
 
             controlPanelCollapser.textColorNotActive = color(255);
@@ -239,7 +239,7 @@ class TopNav {
         color topNavBg;
         color subNavBg;
         if (colorScheme == COLOR_SCHEME_ALTERNATIVE_A) {
-            topNavBg = OPENBCI_BLUE;
+            topNavBg = NEURO_TECH_BLACK;
             subNavBg = SUBNAV_LIGHTBLUE;
             logo = logo_white;
         } else {
@@ -267,7 +267,7 @@ class TopNav {
         //hide the center logo if buttons would overlap it
         if (width > 860) {
             //this is the center logo
-            image(logo, width/2 - (128/2) - 2, 6, 128, 22);
+            image(logo, width/2 - (128/2) - 2, 3, 130, 28);
         }
 
         //Draw these buttons during a Session
@@ -1101,7 +1101,7 @@ class TutorialSelector {
 
             stroke(OPENBCI_DARKBLUE);
             // fill(229); //bg
-            fill(OPENBCI_BLUE); //bg
+            fill(NEURO_TECH_BLACK); //bg
             rect(x, y, w, h);
 
 

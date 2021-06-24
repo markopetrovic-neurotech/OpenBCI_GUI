@@ -418,7 +418,7 @@ class ChannelSelect {
         if (showChannelText) {
             //change "Channels" text color and triangle color on hover
             if (channelSelectHover) {
-                fill(OPENBCI_BLUE);
+                fill(NEURO_TECH_BLACK);
             } else {
                 fill(0);
             }
