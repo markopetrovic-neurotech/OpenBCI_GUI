@@ -111,7 +111,7 @@ class HelpWidget {
             // fill(OPENBCI_DARKBLUE);
             fill(getTextColor());
             // fill(57,128,204);
-            // fill(OPENBCI_BLUE);
+            // fill(NEURO_TECH_BLACK);
             textAlign(LEFT, TOP);
             text(currentOutput, padding*2, height - h + padding);
         }

@@ -189,7 +189,7 @@ boolean textFieldIsActive = false;
 int win_w;  //window width
 int win_h; //window height
 
-PImage cog;
+PImage loadingImage;
 Gif loadingGIF;
 Gif loadingGIF_blue;
 
@@ -223,7 +223,7 @@ boolean setupComplete = false;
 
 //Starting to collect the GUI-wide color pallet here. Rename constants all caps later...
 final color OPENBCI_DARKBLUE = color(1, 18, 41);
-final color OPENBCI_BLUE = color(31, 69, 110);
+final color NEURO_TECH_BLACK = color(0, 0, 0);
 final color boxColor = color(200);
 final color boxStrokeColor = OPENBCI_DARKBLUE;
 final color isSelected_color = color(184, 220, 105);
@@ -337,7 +337,7 @@ void setup() {
     p5 = createFont("fonts/OpenSans-Regular.ttf", 12);
     p6 = createFont("fonts/OpenSans-Regular.ttf", 10);
 
-    cog = loadImage("cog_1024x1024.png");
+    loadingImage = loadImage("neuro_image.png");
 
     // check if the current directory is writable
     File dummy = new File(sketchPath());
@@ -917,12 +917,12 @@ void introAnimation() {
         verbosePrint(String.valueOf(transparency));
         tint(255, transparency);
         //draw OpenBCI Logo Front & Center
-        image(cog, width/2, height/2, width/6, width/6);
+        image(loadingImage, width/2, height/2, width/6, width/6);
         textFont(p3, 16);
         textLeading(24);
         fill(31, 69, 110, transparency);
         textAlign(CENTER, CENTER);
-        String displayVersion = "OpenBCI GUI " + localGUIVersionString;
+        String displayVersion = "Neuro-Tech GUI "; //+ localGUIVersionString
         text(displayVersion, width/2, height/2 + width/9);
         text(localGUIVersionDate, width/2, height/2 + ((width/8) * 1.125));
     }
