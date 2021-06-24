@@ -9,6 +9,10 @@ class W_headPlotImp extends Widget {
     /* header */
     Button backBtn;
     Button nextBtn;
+    Button headConnBtn;
+    Button eegBtn;
+    Button concenBtn;
+    Button trainingBtn;
     int rectOff = 8;
     public String intensity_data_uV;    
     int navButtonWidth, navButtonHeight; //dims of nav buttons
@@ -55,25 +59,25 @@ class W_headPlotImp extends Widget {
     public void draw(){
         super.draw();
         background(color(widgetColorBkgr));
-
-        pushStyle();
-        fill(color(128));
-        stroke(0);
-        rect(x, y, x + w, headerHeight);
-        popStyle(); 
-
+        
+        drawHeader();
         //showWidgetGrid();
 
         pushStyle();
         topFrame.draw();
 
+        //build anything that does not have to be init and hidden
         widgetFactory(showingScreen);
+        //show and hide widgets on screen change
+        //showScreenWidgets(showingScreen);
         
         popStyle(); 
     }
     
-    void initialize_UI(){
+    //only put widgets here that are drawn with ControlP5 topFrame. Anything else won't be drawn
+    void initialize_UI(){        
         drawTransitionBtns();
+        drawNavToWidgetBtns();
     }
 
     public void screenResized(){
@@ -82,6 +86,15 @@ class W_headPlotImp extends Widget {
 
     public void mousePressed(){
         super.mousePressed();
+    }
+
+    //Draws the header bar
+    void drawHeader(){
+        pushStyle();
+        fill(color(128));
+        stroke(0);
+        rect(x, y, x + w, headerHeight);
+        popStyle();
     }
 
     //This draws the header buttons that allows the use to nav thru the widgets
@@ -118,6 +131,38 @@ class W_headPlotImp extends Widget {
         nextBtn.setDescription("Click here to go forward.");              
     }
 
+    //This draws the buttons to navigate directly to each widget
+    void drawNavToWidgetBtns(){
+        headConnBtn = createButton(topFrame, "buttonID3", "gotoHeadConn", x + 102 + navButtonWidth, y+5, navButtonWidth, navButtonHeight, 0, p4, 14, WHITE, BLACK, BUTTON_HOVER, BUTTON_PRESSED, OBJECT_BORDER_GREY, 0);
+        headConnBtn.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+                print("nav to head connection\n");
+                showingScreen = "connectivity";
+            }
+        });
+        eegBtn = createButton(topFrame, "buttonID4", "gotoEEG", x + 104 + navButtonWidth*2, y+5, navButtonWidth, navButtonHeight, 0, p4, 14, WHITE, BLACK, BUTTON_HOVER, BUTTON_PRESSED, OBJECT_BORDER_GREY, 0);
+        eegBtn.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+                print("nav to eeg plot\n");
+                showingScreen = "eeg";
+            }
+        });
+        concenBtn = createButton(topFrame, "buttonID5", "gotoConcen", x + 106 + navButtonWidth*3, y+5, navButtonWidth, navButtonHeight, 0, p4, 14, WHITE, BLACK, BUTTON_HOVER, BUTTON_PRESSED, OBJECT_BORDER_GREY, 0);
+        concenBtn.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+                print("nav to concentration algo\n");
+                showingScreen = "concentration";
+            }
+        });
+        trainingBtn = createButton(topFrame, "buttonID6", "gotoProfile", x + 108 + navButtonWidth*4, y+5, navButtonWidth, navButtonHeight, 0, p4, 14, WHITE, BLACK, BUTTON_HOVER, BUTTON_PRESSED, OBJECT_BORDER_GREY, 0);
+        trainingBtn.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+                print("nav to my profile\n");
+                showingScreen = "profile";
+            }
+        });
+    }
+
     //Draws gridlines to visualise grid coordinates
     void showWidgetGrid(){
         pushStyle();
@@ -128,7 +173,7 @@ class W_headPlotImp extends Widget {
         popStyle();
     }
 
-    //Load the required widgets given its name
+    //Build the required widgets given its name.
     void widgetFactory(String showingScreen){
         titleTextFactory(showingScreen);
     }
