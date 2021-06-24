@@ -42,9 +42,9 @@ class W_HeadPlot extends Widget {
     void updateHeadPlot(int _nchan) {
         headPlot = new HeadPlot(x, y, w, h, win_w, win_h);
         //FROM old Gui_Manager
-        // data_elec_imp_ohm  for impedence values, TODO: trigger by button/ui flow
+        // for impedence values, TODO: trigger by button/ui flow data_elec_imp_ohm
         //dataProcessing.data_std_uV
-        headPlot.setIntensityData_byRef(dataProcessing.data_std_uV, is_railed);
+        headPlot.setIntensityData_byRef( dataProcessing.data_std_uV, is_railed);
         headPlot.setPolarityData_byRef(dataProcessing.polarity);
         setSmoothFac(smoothFac[smoothFac_ind]);
     }
@@ -1061,7 +1061,7 @@ class HeadPlot {
 
     private color calcPixelColor(float pixel_volt_uV) {
         // float new_rgb[] = {255.0, 0.0, 0.0}; //init to red
-        //224, 56, 45
+        // 224, 56, 45
         float new_rgb[] = {224.0, 56.0, 45.0}; //init to red
         // float new_rgb[] = {0.0, 255.0, 0.0}; //init to red
         //54, 87, 158
@@ -1138,6 +1138,8 @@ class HeadPlot {
 
     //compute color for the electrode value
     private void updateElectrodeColors() {
+        //int rgb[] = new int[]{57, 238, 88}; //color for the electrode when fully light
+        
         int rgb[] = new int[]{255, 0, 0}; //color for the electrode when fully light
         float intensity;
         float val;
@@ -1158,7 +1160,7 @@ class HeadPlot {
             for (int i=0; i < 3; i++) {
                 val = ((float)rgb[i]) / 255.f;
                 new_rgb[i] = (int)((val + (1.0f - val)*(1.0f-intensity))*255.f); //adds in white at low intensity.  no white at high intensity
-                new_rgb[i] = constrain(new_rgb[i], 0, 255);
+                new_rgb[i] = constrain(0, new_rgb[i], 255);
             }
 
             //change color to dark RED if railed
@@ -1185,7 +1187,7 @@ class HeadPlot {
 
     void mousePressed() {
         if (mouse_over_elec_index > -1) {
-            isDragging = true;
+            isDragging = false;
             drag_x = mouseX - electrode_xy[mouse_over_elec_index][0];
             drag_y = mouseY - electrode_xy[mouse_over_elec_index][1];
         } else {
