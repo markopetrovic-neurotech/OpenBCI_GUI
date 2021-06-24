@@ -278,6 +278,7 @@ static CustomOutputStream outputStream;
 //Variables from TopNav.pde. Used to set text when stopping/starting data stream.
 public final static String stopButton_pressToStop_txt = "Stop Data Stream";
 public final static String stopButton_pressToStart_txt = "Start Data Stream";
+public final static int BUTTON_ROUNDING = 20;
 
 SessionSettings settings;
 DirectoryManager directoryManager;
@@ -965,14 +966,14 @@ void drawOverlay(String text) {
     pushStyle();
     //imageMode(CENTER);
     fill(124, 142);
-    rect(0, 0, width, height);
+    rect(0, 0, width, height, BUTTON_ROUNDING);
     popStyle();
 
     pushStyle();
     textFont(p0, 24);
     fill(boxColor, 255);
     stroke(OPENBCI_DARKBLUE, 200);
-    rect(width/2 - (textWidth(text)+20)/2, height/2 - 80/2, textWidth(text) + 20, 80);
+    rect(width/2 - (textWidth(text)+20)/2, height/2 - 80/2, textWidth(text) + 20, 80, BUTTON_ROUNDING);
     fill(OPENBCI_DARKBLUE, 255);
     text(text, width/2 - textWidth(text)/2, height/2 + 8);
     popStyle();

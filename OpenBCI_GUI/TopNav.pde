@@ -257,11 +257,11 @@ class TopNav {
         pushStyle();
         //stroke(OPENBCI_DARKBLUE);
         fill(topNavBg);
-        rect(0, 0, width, navBarHeight);
+        rect(0, 0, width, navBarHeight, BUTTON_ROUNDING);
         //noStroke();
         stroke(strokeColor);
         fill(subNavBg);
-        rect(-1, navBarHeight, width+2, navBarHeight);
+        rect(-1, navBarHeight, width+2, navBarHeight, BUTTON_ROUNDING);
         popStyle();
 
         //hide the center logo if buttons would overlap it
@@ -678,12 +678,12 @@ class LayoutSelector {
             stroke(OPENBCI_DARKBLUE);
             // fill(229); //bg
             fill(57, 128, 204); //bg
-            rect(x, y, w, h);
+            rect(x, y, w, h, BUTTON_ROUNDING);
 
             fill(57, 128, 204);
             // fill(177, 184, 193);
             noStroke();
-            rect(x+w-(topNav.layoutButton.getWidth()-1), y, (topNav.layoutButton.getWidth()-1), 1);
+            rect(x+w-(topNav.layoutButton.getWidth()-1), y, (topNav.layoutButton.getWidth()-1), 1, BUTTON_ROUNDING);
 
             popStyle();
 
@@ -828,7 +828,7 @@ class ConfigSelector {
 
             stroke(OPENBCI_DARKBLUE);
             fill(57, 128, 204); //bg
-            rect(x, y, w, h);
+            rect(x, y, w, h, BUTTON_ROUNDING);
 
             boolean isSessionStarted = (systemMode == SYSTEMMODE_POSTINIT);
             saveSessionSettings.setVisible(isSessionStarted);
@@ -847,7 +847,7 @@ class ConfigSelector {
             fill(57, 128, 204);
             noStroke();
             //This makes the dropdown box look like it's apart of the button by drawing over the part that overlaps
-            rect(x+w-(topNav.settingsButton.getWidth()-1), y, (topNav.settingsButton.getWidth()-1), 1);
+            rect(x+w-(topNav.settingsButton.getWidth()-1), y, (topNav.settingsButton.getWidth()-1), 1, BUTTON_ROUNDING);
 
             popStyle();
 
@@ -1102,13 +1102,13 @@ class TutorialSelector {
             stroke(OPENBCI_DARKBLUE);
             // fill(229); //bg
             fill(OPENBCI_BLUE); //bg
-            rect(x, y, w, h);
+            rect(x, y, w, h, BUTTON_ROUNDING);
 
 
             // fill(177, 184, 193);
             noStroke();
             //Draw a tiny rectangle to make it look like the box and button are connected
-            rect(x+w-(topNav.tutorialsButton.getWidth()-1), y, (topNav.tutorialsButton.getWidth()-1), 1);
+            rect(x+w-(topNav.tutorialsButton.getWidth()-1), y, (topNav.tutorialsButton.getWidth()-1), 1, BUTTON_ROUNDING);
 
             popStyle();
 

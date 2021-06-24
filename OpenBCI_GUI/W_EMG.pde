@@ -186,7 +186,7 @@ class W_emg extends Widget {
         pushStyle();
         noStroke();
         fill(255);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
 
         float rx = x, ry = y, rw = w, rh = h;
         float scaleFactor = 1.0;
@@ -229,13 +229,13 @@ class W_emg extends Widget {
                 //draw normalized bar graph of uV w/ matching channel color
                 noStroke();
                 fill(red(channelColors[index%8]), green(channelColors[index%8]), blue(channelColors[index%8]), 200);
-                rect(_x, 3*_y + 1, _w, map(motorWidgets[i * colNum + j].output_normalized, 0, 1, 0, (-1) * int((4*rowOffset/8))));
+                rect(_x, 3*_y + 1, _w, map(motorWidgets[i * colNum + j].output_normalized, 0, 1, 0, (-1) * int((4*rowOffset/8))), BUTTON_ROUNDING);
 
                 //draw background bar container for mapped uV value indication
                 strokeWeight(1);
                 stroke(red(OPENBCI_DARKBLUE), green(OPENBCI_DARKBLUE), blue(OPENBCI_DARKBLUE), 150);
                 noFill();
-                rect(_x, _y, _w, _h);
+                rect(_x, _y, _w, _h, BUTTON_ROUNDING);
 
                 //draw channel number at upper left corner of row/column cell
                 pushStyle();

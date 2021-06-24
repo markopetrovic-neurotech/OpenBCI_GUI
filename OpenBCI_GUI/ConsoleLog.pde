@@ -145,7 +145,7 @@ static class ConsoleWindow extends PApplet implements Runnable {
     void scene() {
         background(42);
         fill(42);
-        rect(0, 0, width, headerHeight);
+        rect(0, 0, width, headerHeight, BUTTON_ROUNDING);
     }
 
     void keyReleased() {

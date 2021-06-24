@@ -204,7 +204,7 @@ public class Container {
             //draw margin area
             fill(102, 255, 71, 100);
             noStroke();
-            rect(x0, y0, w0, h0);
+            rect(x0, y0, w0, h0, BUTTON_ROUNDING);
 
             //noFill();
             //stroke(255, 0, 0);
@@ -212,7 +212,7 @@ public class Container {
 
             fill(31, 69, 110, 100);
             noStroke();
-            rect(x, y, w, h);
+            rect(x, y, w, h, BUTTON_ROUNDING);
 
             popStyle();
         }

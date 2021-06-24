@@ -1160,7 +1160,7 @@ class HeadPlot {
             for (int i=0; i < 3; i++) {
                 val = ((float)rgb[i]) / 255.f;
                 new_rgb[i] = (int)((val + (1.0f - val)*(1.0f-intensity))*255.f); //adds in white at low intensity.  no white at high intensity
-                new_rgb[i] = constrain(0, new_rgb[i], 255);
+                new_rgb[i] = constrain(new_rgb[i], new_rgb[i], 255);
             }
 
             //change color to dark RED if railed

@@ -59,7 +59,7 @@ class W_headPlotImp extends Widget {
         pushStyle();
         fill(color(128));
         stroke(0);
-        rect(x, y, x + w, headerHeight);
+        rect(x, y, x + w, headerHeight, BUTTON_ROUNDING);
         popStyle(); 
 
         //showWidgetGrid();
@@ -142,7 +142,7 @@ class W_headPlotImp extends Widget {
         strokeWeight(2);
         stroke(0);
         fill(255);
-        rect(col0, row0, txtW, -20);
+        rect(col0, row0, txtW, -20, BUTTON_ROUNDING);
         int topLeftPadding = 5;
         fill(0);
         textSize(titleTextSize);
