@@ -449,6 +449,7 @@ class TopNav {
                stopButtonWasPressed();
             }
         });
+        toggleDataStreamingButton.setCornerRoundness(20);
         toggleDataStreamingButton.setDescription("Press this button to Stop/Start the data stream. Or press <SPACEBAR>");
     }
 

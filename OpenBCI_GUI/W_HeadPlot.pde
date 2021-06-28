@@ -205,6 +205,7 @@ class HeadPlot {
     public int hp_h = 0;
     public boolean hardCalcsDone = false;
     public boolean threadLock = false;
+    Table elec_relXYZ = new Table();
 
     HeadPlot(int _x, int _y, int _w, int _h, int _win_x, int _win_y) {
         final int n_elec = nchan;  //set number of electrodes using the global nchan variable
@@ -351,33 +352,34 @@ class HeadPlot {
     private void setElectrodeLocations(int n_elec, float elec_relDiam) {
         //try loading the positions from a file
         int n_elec_to_load = n_elec+1;  //load the n_elec plus the reference electrode
-        Table elec_relXY = new Table();
+        
         String default_fname = "electrode_positions_default.txt";
         //String default_fname = "electrode_positions_12elec_scalp9.txt";
         try {
-            elec_relXY = loadTable(default_fname, "header,csv"); //try loading the default file
+            elec_relXYZ = loadTable(default_fname, "header,csv"); //try loading the default file
             println(" LOADed");
+           // System.out.println(elec_relXY.toString());
         }
         catch (NullPointerException e) {
             println("FAILED TO LOAD");
         };
 
         //get the default locations if the file didn't exist
-        if ((elec_relXY == null) || (elec_relXY.getRowCount() < n_elec_to_load)) {
+        if ((elec_relXYZ == null) || (elec_relXYZ.getRowCount() < n_elec_to_load)) {
             println("headPlot: electrode position file not found or was wrong size: " + default_fname);
             println("        : using defaults...");
-            elec_relXY = createDefaultElectrodeLocations(default_fname, elec_relDiam);
+            elec_relXYZ = createDefaultElectrodeLocations(default_fname, elec_relDiam);
         }
 
         //define the actual locations of the electrodes in pixels
-        for (int i=0; i < min(electrode_xy.length, elec_relXY.getRowCount()); i++) {
-            electrode_xy[i][0] = circ_x+(int)(elec_relXY.getFloat(i, 0)*((float)circ_diam));
-            electrode_xy[i][1] = circ_y+(int)(elec_relXY.getFloat(i, 1)*((float)circ_diam));
+        for (int i=0; i < min(electrode_xy.length, elec_relXYZ.getRowCount()); i++) {
+            electrode_xy[i][0] = circ_x+(int)(elec_relXYZ.getFloat(i, 0)*((float)circ_diam));
+            electrode_xy[i][1] = circ_y+(int)(elec_relXYZ.getFloat(i, 1)*((float)circ_diam));
         }
 
         //the referenece electrode is last in the file
-        ref_electrode_xy[0] = circ_x+(int)(elec_relXY.getFloat(elec_relXY.getRowCount()-1, 0)*((float)circ_diam));
-        ref_electrode_xy[1] = circ_y+(int)(elec_relXY.getFloat(elec_relXY.getRowCount()-1, 1)*((float)circ_diam));
+        ref_electrode_xy[0] = circ_x+(int)(elec_relXYZ.getFloat(elec_relXYZ.getRowCount()-1, 0)*((float)circ_diam));
+        ref_electrode_xy[1] = circ_y+(int)(elec_relXYZ.getFloat(elec_relXYZ.getRowCount()-1, 1)*((float)circ_diam));
     }
 
     private Table createDefaultElectrodeLocations(String fname, float elec_relDiam) {
@@ -1242,20 +1244,14 @@ class HeadPlot {
         //draw head parts
         fill(255, 255, 255);
         stroke(125, 125, 125);
-        triangle(nose_x[0], nose_y[0], nose_x[1], nose_y[1], nose_x[2], nose_y[2]);  //nose
-        ellipse(earL_x, earL_y, ear_width, ear_height); //little circle for the ear
-        ellipse(earR_x, earR_y, ear_width, ear_height); //little circle for the ear
+       // triangle(nose_x[0], nose_y[0], nose_x[1], nose_y[1], nose_x[2], nose_y[2]);  //nose
+       // ellipse(earL_x, earL_y, ear_width, ear_height); //little circle for the ear
+      //  ellipse(earR_x, earR_y, ear_width, ear_height); //little circle for the ear
 
         //draw head itself
 
       
-        pushMatrix();     
-        fill(255, 255, 255, 255);  //fill in a white head
-        noStroke();
-        translate(circ_x, circ_y, -200);
-        lights();
-        sphere(circ_diam/1.5); //big circle for the head
-        popMatrix();
+        
         if (drawHeadAsContours) {
             //add the contnours
             image(headImage, image_x, image_y);
@@ -1287,13 +1283,38 @@ class HeadPlot {
             }
             
             noStroke();
-            translate(electrode_xy[Ielec][0], electrode_xy[Ielec][1], 100);
+         
+            translate(electrode_xy[Ielec][0], electrode_xy[Ielec][1], elec_relXYZ.getFloat(Ielec, 2));
             lights();
             sphere(elec_diam/2.2); //electrode circle
             popMatrix();
-  }
+         }
+
+        pushMatrix();     
+        fill(255, 255, 255, 255);  //fill in a white head
+        noStroke();
+       // translate(circ_x, circ_y , -200);
+        lights();
+        //* .86602
+        float fov = PI/3.0;
+        float cameraZ = (height/2.0) / tan(fov/2.0);
+        perspective(fov, float(width) / float(height), cameraZ/100.0, cameraZ*100.0);
+        /*  camera(circ_x, circ_x, 0,
+                0, 0, 0,
+                0, 0, 0);  */
+        scale(40);
+      //  rotateX(radians(-35));
+        //
+      
+       // println(modelX(0, 0, 0));  
+        translate(13,20, -5);
+        rotateZ(PI);
+
+        ////sphere(circ_diam/1.5); //big circle for the head
+        shape(head);
+        popMatrix();
         //add labels to electrodes
-        fill(0, 0, 0);
+       /*  fill(0, 0, 0);
         textFont(font);
         textAlign(CENTER, CENTER);
         for (int i=0; i < electrode_xy.length; i++) {
@@ -1301,7 +1322,7 @@ class HeadPlot {
             text(i+1, electrode_xy[i][0], electrode_xy[i][1]);
         }
         text("R", ref_electrode_xy[0], ref_electrode_xy[1]);
-
+ */
         popStyle();
     } //end of draw method
 };

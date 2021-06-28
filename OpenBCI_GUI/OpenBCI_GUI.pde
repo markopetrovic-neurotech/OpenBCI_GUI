@@ -222,13 +222,13 @@ PFont p6; //small Open Sans
 boolean setupComplete = false;
 
 //Starting to collect the GUI-wide color pallet here. Rename constants all caps later...
-final color OPENBCI_DARKBLUE = color(1, 18, 41);
+final color OPENBCI_DARKBLUE = color(46, 46, 46);
 final color NEURO_TECH_BLACK = color(0, 0, 0);
 final color boxColor = color(200);
 final color boxStrokeColor = OPENBCI_DARKBLUE;
 final color isSelected_color = color(184, 220, 105);
 final color colorNotPressed = color(255);
-final color buttonsLightBlue = color(57,128,204);
+final color buttonsLightBlue = color(0, 0, 0);
 final color TURN_ON_GREEN = color(184,220,105);
 final color WHITE = color(255);
 final color BLACK = color(0);
@@ -255,6 +255,7 @@ int colorScheme = COLOR_SCHEME_ALTERNATIVE_A;
 WidgetManager wm;
 boolean wmVisible = true;
 CColor cp5_colors;
+public PShape head;
 
 //Channel Colors -- Defaulted to matching the OpenBCI electrode ribbon cable
 final color[] channelColors = {
@@ -310,10 +311,14 @@ void settings() {
     size(win_w, win_h, P3D);
 }
 
+
 void setup() {
     frameRate(120);
 
     copyPaste = new CopyPaste();
+ 
+    // 3D MODELS
+    head = loadShape("head.obj");
 
     //V1 FONTS
     f1 = createFont("fonts/Raleway-SemiBold.otf", 16);
@@ -384,6 +389,7 @@ void setup() {
 
     //open window
     ourApplet = this;
+    //ourApplet.getSurface().setResizable(false);
 
     // Bug #426: If setup takes too long, JOGL will time out waiting for the GUI to draw something.
     // moving the setup to a separate thread solves this. We just have to make sure not to
@@ -810,6 +816,7 @@ void systemUpdate() { // for updating data values and variables
             topNav.screenHasBeenResized(width, height);
             settings.widthOfLastScreen = width;
             settings.heightOfLastScreen = height;
+           // fullScreen();
             //println("W = " + width + " || H = " + height);
         }
     }
@@ -823,14 +830,19 @@ void systemUpdate() { // for updating data values and variables
             settings.timeOfLastScreenResize = millis();
             settings.widthOfLastScreen = width;
             settings.heightOfLastScreen = height;
+          //  fullScreen();
+
         }
 
         //re-initialize GUI if screen has been resized and it's been more than 1/2 seccond (to prevent reinitialization of GUI from happening too often)
         if (settings.screenHasBeenResized && settings.timeOfLastScreenResize + 500 > millis()) {
             ourApplet = this; //reset PApplet...
+          //  fullScreen();
+
             topNav.screenHasBeenResized(width, height);
             wm.screenResized();
             settings.screenHasBeenResized = false;
+
         }
 
         if (wm.isWMInitialized) {
