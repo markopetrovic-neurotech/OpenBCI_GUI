@@ -54,7 +54,8 @@ class W_HeadPlot extends Widget {
         continueButton = cp5.addButton("Continue")
             .setPosition(width/1.1 - buttonWidth, height/3 - buttonHeight - padding)
             .setSize(buttonWidth, buttonHeight)
-            .setFont(p1);
+            .setFont(p1)
+            .setCornerRoundness(15);
         cp5.getController("Continue")
             .getCaptionLabel()
             .toUpperCase(false)
