@@ -1,0 +1,193 @@
+//author: Drose
+
+class W_headPlotImpCpy /*extends Widget*/ {
+
+    String showingScreen;
+
+    ControlP5 topFrame;
+    int widgetColorBkgr = 255;
+    /* header */
+    Button backBtn;
+    Button nextBtn;
+    int rectOff = 8;
+    public String intensity_data_uV;    
+    int navButtonWidth, navButtonHeight; //dims of nav buttons
+
+    /* widget grid */
+    int col0;
+    int row0;
+    int colWidth = 150;
+
+    /* widget dims */
+    final int screenTitleTextSizeW = 120, screenTitleTextSizeH = 20;
+    int headerHeight;
+
+    /* screens */
+    Boolean headConnVisible;
+    Boolean eegVisible;
+    Boolean concenVisible;
+    Boolean trainingVisible;
+
+    String[] screenNames = {"connectivity","eeg","concentration","profile"};
+    String[] firstLabelNames = {"first screen",
+    "second screen", "third screen", "fourth screen"};
+
+    W_headPlotImp(PApplet _parent){
+        super(_parent); //calls the parent CONSTRUCTOR method of Widget (DON'T REMOVE)
+        //This is the protocol for setting up dropdowns.
+        //The last parameter is the default index selection
+        //You just need to make sure the "id" (the 1st String) has the same name as the corresponding function
+        addDropdown("MyDropdown1", "Drop 1", Arrays.asList("C", "D"), 0);
+        showingScreen = "connectivity";
+        navButtonHeight = 20;
+        navButtonWidth = 100; 
+        col0 = 150;
+        headerHeight = navButtonHeight + rectOff;
+        row0 = y + headerHeight + 30;
+        topFrame = new ControlP5(pApplet);
+               
+        //this draws over the other widgets too...
+        initialize_UI();   
+        topFrame.setAutoDraw(false);   
+    }
+
+    public void update(){
+        super.update();
+    }
+
+    public void draw(){
+        super.draw();
+        background(color(widgetColorBkgr));
+
+        pushStyle();
+        fill(color(128));
+        stroke(0);
+        rect(x, y, x + w, headerHeight);
+        popStyle(); 
+
+        pushStyle();
+        showFrame();
+        topFrame.draw();
+
+        fill(0,0,0);
+        titleTextFactory(showingScreen);
+        
+        popStyle(); 
+    }
+    
+    void initialize_UI(){
+        drawTransitionBtns();
+        createScreenTitles(firstLabelNames);
+    }
+
+    public void screenResized(){
+        super.screenResized();
+    }
+
+    public void mousePressed(){
+        super.mousePressed();
+    }
+    
+    void showFrame(){
+        headConnVisible = false;
+        eegVisible = false;
+        concenVisible = false;
+        trainingVisible = false;
+
+        if (showingScreen.equals("connectivity")) {
+            headConnVisible = true;
+        } else if (showingScreen.equals("eeg")) {
+            eegVisible = true;
+        } else if (showingScreen.equals("concentration")) {
+            concenVisible = true;
+        } else if (showingScreen.equals("profile")) {
+            trainingVisible = true;
+        }else{
+            headConnVisible = true;
+        }
+
+        setTextFieldVisible(firstLabelNames[0], headConnVisible);
+        setTextFieldVisible(firstLabelNames[1], eegVisible);
+        setTextFieldVisible(firstLabelNames[2], concenVisible);
+        setTextFieldVisible(firstLabelNames[3], trainingVisible);
+    }
+
+    void drawTransitionBtns(){         
+        backBtn = createButton(topFrame, "buttonID1", "Back", x + 10, y+5, navButtonWidth, navButtonHeight, 0, p4, 14, WHITE, BLACK, BUTTON_HOVER, BUTTON_PRESSED, OBJECT_BORDER_GREY, 0);
+        backBtn.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+                print("back button pressed\n");
+                int ind = 0;
+                int size = screenNames.length;
+                for(int i=0;i<size;i++){
+                    if(screenNames[i].equals(showingScreen)){
+                        ind = i;
+                    }
+                }
+                showingScreen = screenNames[(ind+size-1)%size];
+            }
+        });
+        backBtn.setDescription("Click here to go back.");
+        nextBtn = createButton(topFrame, "buttonID2", "Forward", x + w - navButtonWidth - 10, y+5, navButtonWidth, navButtonHeight, 0, p4, 14, WHITE, BLACK, BUTTON_HOVER, BUTTON_PRESSED, OBJECT_BORDER_GREY, 0);
+        nextBtn.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+                print("next button pressed\n");
+                int ind = 0;
+                int size = screenNames.length;
+                for(int i=0;i<size;i++){
+                    if(screenNames[i].equals(showingScreen)){
+                        ind = i;
+                    }
+                }                
+                showingScreen = screenNames[(ind+1)%size];
+            }
+        });
+        nextBtn.setDescription("Click here to go forward.");              
+    }
+
+    void setTextFieldVisible(String name, Boolean b){
+        topFrame.get(Textfield.class, name).setVisible(b);
+    }
+
+    //these are input fields, not just labels
+    void createScreenTitles(String[] labels){
+        for(int i=0; i<labels.length;i++){
+            String name = labels[i];
+            topFrame.addTextfield(name, x, y + headerHeight, screenTitleTextSizeW, screenTitleTextSizeH)
+                .align(5,10,5,10)
+                .setSize(screenTitleTextSizeW,screenTitleTextSizeH)
+                .setFont(f2)
+                .setFocus(false)
+                .setColor(color(26,26,26))
+                .setColorBackground(color(200,200,200)) 
+                .setColorValueLabel(color(0,0,0))       
+                .setColorForeground(color(26,26,26))    
+                .setColorActive(isSelected_color)       
+                .setColorCursor(color(26,26,26))
+                .setText(name)
+                .setCaptionLabel("")
+                .setVisible(false)
+                .setAutoClear(true);
+        }
+    }
+
+    void titleTextFactory(String shownScreen){
+        pushStyle();
+        int txtW = (int) textWidth(shownScreen);
+        txtW+=10;
+        strokeWeight(2);
+        stroke(0);
+        rect(col0, row0, txtW, 20);
+        int topLeftPadding = 5;
+        text(shownScreen,col0+topLeftPadding,row0+topLeftPadding); 
+        popStyle();
+    }
+
+};
+
+//These functions need to be global! These functions are activated when an item from the corresponding dropdown is selected
+void MyDropdown1(int n){
+    if(n==0){
+    } else if(n==1){
+    }
+}
