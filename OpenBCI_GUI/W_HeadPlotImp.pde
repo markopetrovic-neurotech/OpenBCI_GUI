@@ -187,7 +187,7 @@ class W_headPlotImp extends Widget {
         strokeWeight(2);
         stroke(0);
         fill(255);
-        rect(col0, row0, txtW, -20);
+        rect(col0, row0, txtW, -20, BUTTON_ROUNDING);
         int topLeftPadding = 5;
         fill(0);
         textSize(titleTextSize);

@@ -391,7 +391,7 @@ class AnalogReadBar{
         stroke(31,69,110, 50);
         fill(color(125,30,12,30));
 
-        rect(x + 36 + 4, y, w - 36 - 4, h);
+        rect(x + 36 + 4, y, w - 36 - 4, h, BUTTON_ROUNDING);
 
         plot.beginDraw();
         plot.drawBox(); // we won't draw this eventually ...

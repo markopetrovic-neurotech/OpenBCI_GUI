@@ -260,7 +260,7 @@ class ControlPanel {
             fill(boxColor);
             strokeWeight(1);
             stroke(boxStrokeColor);
-            rect(x, y, w, dataSourceBox.h); //draw background of box
+            rect(x, y, w, dataSourceBox.h, BUTTON_ROUNDING); //draw background of box
             String stopInstructions = "Press the \"STOP SESSION\" button to change your data source or edit system settings.";
             textAlign(CENTER, TOP);
             textFont(p4, 14);
@@ -319,7 +319,7 @@ class DataSourceBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -409,7 +409,7 @@ class SerialBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -501,7 +501,7 @@ class ComPortBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -643,7 +643,7 @@ class BLEBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -790,7 +790,7 @@ class WifiBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -997,7 +997,7 @@ class InterfaceBoxCyton {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -1080,7 +1080,7 @@ class InterfaceBoxGanglion {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -1187,7 +1187,7 @@ class SessionDataBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -1451,7 +1451,7 @@ class ChannelCountBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -1548,7 +1548,7 @@ class SampleRateGanglionBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -1648,7 +1648,7 @@ class SampleRateCytonBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -1742,7 +1742,7 @@ class SyntheticChannelCountBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -1861,7 +1861,7 @@ class RecentPlaybackBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h + recentPlaybackSL.getHeight() - padding*2.5);
+        rect(x, y, w, h + recentPlaybackSL.getHeight() - padding*2.5, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -2004,7 +2004,7 @@ class GaleaBox {
         stroke(boxStrokeColor);
         strokeWeight(1);
         //draw flexible grey background for this box
-        rect(x, y, w, h + modeList.getHeight() - padding*2);
+        rect(x, y, w, h + modeList.getHeight() - padding*2, BUTTON_ROUNDING);
         popStyle();
 
         pushStyle();
@@ -2217,7 +2217,7 @@ class StreamingBoardBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         popStyle();
 
         pushStyle();
@@ -2333,7 +2333,7 @@ class PlaybackFileBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -2410,7 +2410,7 @@ class SDBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -2521,7 +2521,7 @@ class RadioConfigBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -2536,7 +2536,7 @@ class RadioConfigBox {
         pushStyle();
         textAlign(LEFT);
         fill(OPENBCI_DARKBLUE);
-        rect(x + padding, y + padding*5 + headerH + buttonH*2 + autoscanH, w-(padding*2), statusWindowH);
+        rect(x + padding, y + padding*5 + headerH + buttonH*2 + autoscanH, w-(padding*2), statusWindowH, BUTTON_ROUNDING);
         fill(255);
         textFont(h3, 15);
         text(localstring, x + padding + 5, y + padding*6 + headerH + buttonH*2 + autoscanH, w - padding*3, statusWindowH - padding);
@@ -2664,7 +2664,7 @@ class ChannelPopup {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
         textFont(h3, 16);
         textAlign(LEFT, TOP);
@@ -2708,7 +2708,7 @@ class InitBox {
         fill(boxColor);
         stroke(boxStrokeColor);
         strokeWeight(1);
-        rect(x, y, w, h);
+        rect(x, y, w, h, BUTTON_ROUNDING);
         popStyle();
         
         initBox_cp5.draw();

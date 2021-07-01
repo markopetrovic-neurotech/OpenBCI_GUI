@@ -17,6 +17,14 @@ int smoothFac_ind = 3;    //initial index into the smoothFac array = 0.75 to sta
 
 class W_HeadPlot extends Widget {
     HeadPlot headPlot;
+    public ControlP5 cp5;
+    public Button continueButton;
+    public boolean continueButtonAvailable = false;
+    private color continueButtonColorRed = color(168, 0, 0);
+    private color continueButtonColorGreen = color(0, 156, 8);
+    private final int buttonWidth = 120;
+    private final int buttonHeight = 40;
+    private final int padding = 20;
 
     W_HeadPlot(PApplet _parent){
         super(_parent); //calls the parent CONSTRUCTOR method of Widget (DON'T REMOVE)
@@ -35,16 +43,63 @@ class W_HeadPlot extends Widget {
         //addDropdown("Polarity", "Polarity", Arrays.asList("+/-", " + "), settings.hpPolaritySave);
         addDropdown("ShowContours", "Contours", Arrays.asList("ON", "OFF"), settings.hpContoursSave);
         //addDropdown("SmoothingHeadPlot", "Smooth", Arrays.asList("0.0", "0.5", "0.75", "0.9", "0.95", "0.98"), smoothFac_ind);
+        //create continue button
+        createContinueButton();
         //Initialize the headplot
         updateHeadPlot(nchan);
+    }
+
+    void createContinueButton() {
+        cp5 = new ControlP5(ourApplet);
+        continueButton = cp5.addButton("Continue")
+            .setPosition(width/1.1 - buttonWidth, height/3 - buttonHeight - padding)
+            .setSize(buttonWidth, buttonHeight)
+            .setFont(p1)
+            .setCornerRoundness(15);
+        cp5.getController("Continue")
+            .getCaptionLabel()
+            .toUpperCase(false)
+            .setSize(24);
+    }
+
+    void onContinueButtonPressed() {
+        if (continueButtonAvailable) {
+            changeContinueButtonColorToRed();
+        } else {
+            changeContinueButtonColorToGreen();
+        }
+    }
+
+    void changeContinueButtonColorToRed() {
+        continueButtonAvailable = false;
+        continueButton.setColorBackground(continueButtonColorRed)
+            .setColorForeground(continueButtonColorRed);
+    }
+
+    void changeContinueButtonColorToGreen() {
+        continueButtonAvailable = true;
+        continueButton.setColorBackground(continueButtonColorGreen)
+            .setColorForeground(continueButtonColorGreen);
     }
 
     void updateHeadPlot(int _nchan) {
         headPlot = new HeadPlot(x, y, w, h, win_w, win_h);
         //FROM old Gui_Manager
         // data_elec_imp_ohm  for impedence values, TODO: trigger by button/ui flow
+        //get average of data_elec_imp
+        float elec_imp_average = 0;
+        for (int i = 0; i < data_elec_imp_ohm.length; i++) {
+            elec_imp_average += data_elec_imp_ohm[i];
+        }
+        elec_imp_average = elec_imp_average/data_elec_imp_ohm.length;
+        //change continue button color if elec_imp_average high enough
+        if (elec_imp_average < 5) {
+            changeContinueButtonColorToGreen();
+        } else {
+            changeContinueButtonColorToRed();
+        }
         //dataProcessing.data_std_uV
-        headPlot.setIntensityData_byRef(dataProcessing.data_std_uV, is_railed);
+        headPlot.setIntensityData_byRef( dataProcessing.data_std_uV, is_railed);
         headPlot.setPolarityData_byRef(dataProcessing.polarity);
         setSmoothFac(smoothFac[smoothFac_ind]);
     }
@@ -79,6 +134,9 @@ class W_HeadPlot extends Widget {
     void mouseReleased(){
         super.mouseReleased(); //calls the parent mouseReleased() method of Widget (DON'T REMOVE)
         headPlot.mouseReleased();
+        if(cp5.isMouseOver(cp5.getController("Continue"))) {
+            onContinueButtonPressed();
+        }
     }
 
     void mouseDragged(){
@@ -205,6 +263,7 @@ class HeadPlot {
     public int hp_h = 0;
     public boolean hardCalcsDone = false;
     public boolean threadLock = false;
+    Table elec_relXYZ = new Table();
 
     HeadPlot(int _x, int _y, int _w, int _h, int _win_x, int _win_y) {
         final int n_elec = nchan;  //set number of electrodes using the global nchan variable
@@ -351,33 +410,34 @@ class HeadPlot {
     private void setElectrodeLocations(int n_elec, float elec_relDiam) {
         //try loading the positions from a file
         int n_elec_to_load = n_elec+1;  //load the n_elec plus the reference electrode
-        Table elec_relXY = new Table();
+        
         String default_fname = "electrode_positions_default.txt";
         //String default_fname = "electrode_positions_12elec_scalp9.txt";
         try {
-            elec_relXY = loadTable(default_fname, "header,csv"); //try loading the default file
+            elec_relXYZ = loadTable(default_fname, "header,csv"); //try loading the default file
             println(" LOADed");
+           // System.out.println(elec_relXY.toString());
         }
         catch (NullPointerException e) {
             println("FAILED TO LOAD");
         };
 
         //get the default locations if the file didn't exist
-        if ((elec_relXY == null) || (elec_relXY.getRowCount() < n_elec_to_load)) {
+        if ((elec_relXYZ == null) || (elec_relXYZ.getRowCount() < n_elec_to_load)) {
             println("headPlot: electrode position file not found or was wrong size: " + default_fname);
             println("        : using defaults...");
-            elec_relXY = createDefaultElectrodeLocations(default_fname, elec_relDiam);
+            elec_relXYZ = createDefaultElectrodeLocations(default_fname, elec_relDiam);
         }
 
         //define the actual locations of the electrodes in pixels
-        for (int i=0; i < min(electrode_xy.length, elec_relXY.getRowCount()); i++) {
-            electrode_xy[i][0] = circ_x+(int)(elec_relXY.getFloat(i, 0)*((float)circ_diam));
-            electrode_xy[i][1] = circ_y+(int)(elec_relXY.getFloat(i, 1)*((float)circ_diam));
+        for (int i=0; i < min(electrode_xy.length, elec_relXYZ.getRowCount()); i++) {
+            electrode_xy[i][0] = circ_x+(int)(elec_relXYZ.getFloat(i, 0)*((float)circ_diam));
+            electrode_xy[i][1] = circ_y+(int)(elec_relXYZ.getFloat(i, 1)*((float)circ_diam));
         }
 
         //the referenece electrode is last in the file
-        ref_electrode_xy[0] = circ_x+(int)(elec_relXY.getFloat(elec_relXY.getRowCount()-1, 0)*((float)circ_diam));
-        ref_electrode_xy[1] = circ_y+(int)(elec_relXY.getFloat(elec_relXY.getRowCount()-1, 1)*((float)circ_diam));
+        ref_electrode_xy[0] = circ_x+(int)(elec_relXYZ.getFloat(elec_relXYZ.getRowCount()-1, 0)*((float)circ_diam));
+        ref_electrode_xy[1] = circ_y+(int)(elec_relXYZ.getFloat(elec_relXYZ.getRowCount()-1, 1)*((float)circ_diam));
     }
 
     private Table createDefaultElectrodeLocations(String fname, float elec_relDiam) {
@@ -1061,7 +1121,7 @@ class HeadPlot {
 
     private color calcPixelColor(float pixel_volt_uV) {
         // float new_rgb[] = {255.0, 0.0, 0.0}; //init to red
-        //224, 56, 45
+        // 224, 56, 45
         float new_rgb[] = {224.0, 56.0, 45.0}; //init to red
         // float new_rgb[] = {0.0, 255.0, 0.0}; //init to red
         //54, 87, 158
@@ -1138,6 +1198,8 @@ class HeadPlot {
 
     //compute color for the electrode value
     private void updateElectrodeColors() {
+        //int rgb[] = new int[]{57, 238, 88}; //color for the electrode when fully light
+        
         int rgb[] = new int[]{255, 0, 0}; //color for the electrode when fully light
         float intensity;
         float val;
@@ -1158,7 +1220,7 @@ class HeadPlot {
             for (int i=0; i < 3; i++) {
                 val = ((float)rgb[i]) / 255.f;
                 new_rgb[i] = (int)((val + (1.0f - val)*(1.0f-intensity))*255.f); //adds in white at low intensity.  no white at high intensity
-                new_rgb[i] = constrain(new_rgb[i], 0, 255);
+                new_rgb[i] = constrain(new_rgb[i], new_rgb[i], 255);
             }
 
             //change color to dark RED if railed
@@ -1185,7 +1247,7 @@ class HeadPlot {
 
     void mousePressed() {
         if (mouse_over_elec_index > -1) {
-            isDragging = true;
+            isDragging = false;
             drag_x = mouseX - electrode_xy[mouse_over_elec_index][0];
             drag_y = mouseY - electrode_xy[mouse_over_elec_index][1];
         } else {
@@ -1240,20 +1302,14 @@ class HeadPlot {
         //draw head parts
         fill(255, 255, 255);
         stroke(125, 125, 125);
-        triangle(nose_x[0], nose_y[0], nose_x[1], nose_y[1], nose_x[2], nose_y[2]);  //nose
-        ellipse(earL_x, earL_y, ear_width, ear_height); //little circle for the ear
-        ellipse(earR_x, earR_y, ear_width, ear_height); //little circle for the ear
+       // triangle(nose_x[0], nose_y[0], nose_x[1], nose_y[1], nose_x[2], nose_y[2]);  //nose
+       // ellipse(earL_x, earL_y, ear_width, ear_height); //little circle for the ear
+      //  ellipse(earR_x, earR_y, ear_width, ear_height); //little circle for the ear
 
         //draw head itself
 
       
-        pushMatrix();     
-        fill(255, 255, 255, 255);  //fill in a white head
-        noStroke();
-        translate(circ_x, circ_y, -200);
-        lights();
-        sphere(circ_diam/1.5); //big circle for the head
-        popMatrix();
+        
         if (drawHeadAsContours) {
             //add the contnours
             image(headImage, image_x, image_y);
@@ -1285,13 +1341,38 @@ class HeadPlot {
             }
             
             noStroke();
-            translate(electrode_xy[Ielec][0], electrode_xy[Ielec][1], 100);
+         
+            translate(electrode_xy[Ielec][0], electrode_xy[Ielec][1], elec_relXYZ.getFloat(Ielec, 2));
             lights();
             sphere(elec_diam/2.2); //electrode circle
             popMatrix();
-  }
+         }
+
+        pushMatrix();     
+        fill(255, 255, 255, 255);  //fill in a white head
+        noStroke();
+       // translate(circ_x, circ_y , -200);
+        lights();
+        //* .86602
+        float fov = PI/3.0;
+        float cameraZ = (height/2.0) / tan(fov/2.0);
+        perspective(fov, float(width) / float(height), cameraZ/100.0, cameraZ*100.0);
+        /*  camera(circ_x, circ_x, 0,
+                0, 0, 0,
+                0, 0, 0);  */
+        scale(40);
+      //  rotateX(radians(-35));
+        //
+      
+       // println(modelX(0, 0, 0));  
+        translate(13,20, -5);
+        rotateZ(PI);
+
+        ////sphere(circ_diam/1.5); //big circle for the head
+        shape(head);
+        popMatrix();
         //add labels to electrodes
-        fill(0, 0, 0);
+       /*  fill(0, 0, 0);
         textFont(font);
         textAlign(CENTER, CENTER);
         for (int i=0; i < electrode_xy.length; i++) {
@@ -1299,7 +1380,7 @@ class HeadPlot {
             text(i+1, electrode_xy[i][0], electrode_xy[i][1]);
         }
         text("R", ref_electrode_xy[0], ref_electrode_xy[1]);
-
+ */
         popStyle();
     } //end of draw method
 };
