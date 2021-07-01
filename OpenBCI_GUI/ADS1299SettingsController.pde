@@ -105,14 +105,14 @@ class ADS1299SettingsController {
             //stroke(31,69,110, 50);
             stroke(OBJECT_BORDER_GREY);
             fill(0, 0, 0, 100);
-            rect(x, y - columnLabelH, w, columnLabelH);
+            rect(x, y - columnLabelH, w, columnLabelH, BUTTON_ROUNDING);
             popStyle();
 
             //background
             pushStyle();
             noStroke();
             fill(0, 0, 0, 100);
-            rect(x, y, w + 1, h);
+            rect(x, y, w + 1, h, BUTTON_ROUNDING);
             popStyle();
 
             gainLabel.draw();
@@ -133,7 +133,7 @@ class ADS1299SettingsController {
                     pushStyle();
                     fill(color(57, 128, 204, 190)); //light blue from TopNav
                     //fill(color(245, 64, 64, 180)); //light red
-                    rect(x, y + chanBar_h * i, w, chanBar_h);
+                    rect(x, y + chanBar_h * i, w, chanBar_h, BUTTON_ROUNDING);
                     popStyle();
                 }
             }
@@ -143,9 +143,9 @@ class ADS1299SettingsController {
             //Draw background behind command buttons
             pushStyle();
             fill(0, 0, 0, 100);
-            rect(x, y + h, w + 1, commandBarH);
+            rect(x, y + h, w + 1, commandBarH, BUTTON_ROUNDING);
             if (showCustomCommandUI) {
-                rect(customCmdUI_x, y + h + commandBarH, customCmdUI_w, commandBarH); //keep above style for other command buttons
+                rect(customCmdUI_x, y + h + commandBarH, customCmdUI_w, commandBarH, BUTTON_ROUNDING); //keep above style for other command buttons
             }
             popStyle();
 

@@ -112,7 +112,7 @@ class W_BandPower extends Widget {
 
         //for this widget need to redraw the grey bar, bc the FFT plot covers it up...
         fill(200, 200, 200);
-        rect(x, y - navHeight, w, navHeight); //button bar
+        rect(x, y - navHeight, w, navHeight, BUTTON_ROUNDING); //button bar
 
         popStyle();
         bpChanSelect.draw();

@@ -189,7 +189,7 @@ boolean textFieldIsActive = false;
 int win_w;  //window width
 int win_h; //window height
 
-PImage cog;
+PImage loadingImage;
 Gif loadingGIF;
 Gif loadingGIF_blue;
 
@@ -222,13 +222,13 @@ PFont p6; //small Open Sans
 boolean setupComplete = false;
 
 //Starting to collect the GUI-wide color pallet here. Rename constants all caps later...
-final color OPENBCI_DARKBLUE = color(1, 18, 41);
-final color OPENBCI_BLUE = color(31, 69, 110);
+final color OPENBCI_DARKBLUE = color(46, 46, 46);
+final color NEURO_TECH_BLACK = color(0, 0, 0);
 final color boxColor = color(200);
 final color boxStrokeColor = OPENBCI_DARKBLUE;
 final color isSelected_color = color(184, 220, 105);
 final color colorNotPressed = color(255);
-final color buttonsLightBlue = color(57,128,204);
+final color buttonsLightBlue = color(0, 0, 0);
 final color TURN_ON_GREEN = color(184,220,105);
 final color WHITE = color(255);
 final color BLACK = color(0);
@@ -255,6 +255,7 @@ int colorScheme = COLOR_SCHEME_ALTERNATIVE_A;
 WidgetManager wm;
 boolean wmVisible = true;
 CColor cp5_colors;
+public PShape head;
 
 //Channel Colors -- Defaulted to matching the OpenBCI electrode ribbon cable
 final color[] channelColors = {
@@ -278,6 +279,7 @@ static CustomOutputStream outputStream;
 //Variables from TopNav.pde. Used to set text when stopping/starting data stream.
 public final static String stopButton_pressToStop_txt = "Stop Data Stream";
 public final static String stopButton_pressToStart_txt = "Start Data Stream";
+public final static int BUTTON_ROUNDING = 20;
 
 SessionSettings settings;
 DirectoryManager directoryManager;
@@ -309,10 +311,14 @@ void settings() {
     size(win_w, win_h, P3D);
 }
 
+
 void setup() {
     frameRate(120);
 
     copyPaste = new CopyPaste();
+ 
+    // 3D MODELS
+    head = loadShape("head.obj");
 
     //V1 FONTS
     f1 = createFont("fonts/Raleway-SemiBold.otf", 16);
@@ -336,7 +342,7 @@ void setup() {
     p5 = createFont("fonts/OpenSans-Regular.ttf", 12);
     p6 = createFont("fonts/OpenSans-Regular.ttf", 10);
 
-    cog = loadImage("cog_1024x1024.png");
+    loadingImage = loadImage("neuro_image.png");
 
     // check if the current directory is writable
     File dummy = new File(sketchPath());
@@ -383,6 +389,7 @@ void setup() {
 
     //open window
     ourApplet = this;
+    //ourApplet.getSurface().setResizable(false);
 
     // Bug #426: If setup takes too long, JOGL will time out waiting for the GUI to draw something.
     // moving the setup to a separate thread solves this. We just have to make sure not to
@@ -569,7 +576,6 @@ void initSystem() {
     // initialize the chosen board
     boolean success = currentBoard.initialize();
     abandonInit = !success; // abandon if init fails
-    
     //Handle edge cases for Cyton and Cyton+Daisy users immediately after board is initialized. Fixes #954
     if (eegDataSource == DATASOURCE_CYTON) {
         println("OpenBCI_GUI: Configuring Cyton Channel Count...");
@@ -810,6 +816,7 @@ void systemUpdate() { // for updating data values and variables
             topNav.screenHasBeenResized(width, height);
             settings.widthOfLastScreen = width;
             settings.heightOfLastScreen = height;
+           // fullScreen();
             //println("W = " + width + " || H = " + height);
         }
     }
@@ -823,14 +830,19 @@ void systemUpdate() { // for updating data values and variables
             settings.timeOfLastScreenResize = millis();
             settings.widthOfLastScreen = width;
             settings.heightOfLastScreen = height;
+          //  fullScreen();
+
         }
 
         //re-initialize GUI if screen has been resized and it's been more than 1/2 seccond (to prevent reinitialization of GUI from happening too often)
         if (settings.screenHasBeenResized && settings.timeOfLastScreenResize + 500 > millis()) {
             ourApplet = this; //reset PApplet...
+          //  fullScreen();
+
             topNav.screenHasBeenResized(width, height);
             wm.screenResized();
             settings.screenHasBeenResized = false;
+
         }
 
         if (wm.isWMInitialized) {
@@ -873,7 +885,7 @@ void systemDraw() { //for drawing to the screen
     }
 
     //Display GUI version and FPS in the title bar of the app
-    surface.setTitle("OpenBCI GUI " + localGUIVersionString + " - " + localGUIVersionDate + " - " + int(frameRate) + " fps");
+    surface.setTitle("Neuro-Tech GUI "  + int(frameRate) + " fps");
 }
 
 void requestReinit() {
@@ -917,12 +929,12 @@ void introAnimation() {
         verbosePrint(String.valueOf(transparency));
         tint(255, transparency);
         //draw OpenBCI Logo Front & Center
-        image(cog, width/2, height/2, width/6, width/6);
+        image(loadingImage, width/2, height/2, width/6, width/6);
         textFont(p3, 16);
         textLeading(24);
         fill(31, 69, 110, transparency);
         textAlign(CENTER, CENTER);
-        String displayVersion = "OpenBCI GUI " + localGUIVersionString;
+        String displayVersion = "Neuro-Tech GUI "; //+ localGUIVersionString
         text(displayVersion, width/2, height/2 + width/9);
         text(localGUIVersionDate, width/2, height/2 + ((width/8) * 1.125));
     }
@@ -966,14 +978,14 @@ void drawOverlay(String text) {
     pushStyle();
     //imageMode(CENTER);
     fill(124, 142);
-    rect(0, 0, width, height);
+    rect(0, 0, width, height, BUTTON_ROUNDING);
     popStyle();
 
     pushStyle();
     textFont(p0, 24);
     fill(boxColor, 255);
     stroke(OPENBCI_DARKBLUE, 200);
-    rect(width/2 - (textWidth(text)+20)/2, height/2 - 80/2, textWidth(text) + 20, 80);
+    rect(width/2 - (textWidth(text)+20)/2, height/2 - 80/2, textWidth(text) + 20, 80, BUTTON_ROUNDING);
     fill(OPENBCI_DARKBLUE, 255);
     text(text, width/2 - textWidth(text)/2, height/2 + 8);
     popStyle();

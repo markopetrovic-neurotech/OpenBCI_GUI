@@ -60,19 +60,27 @@ class Widget{
     }
 
     public void draw(){
+
+        background(255);
         pushStyle();
         noStroke();
         fill(255);
-        rect(x,y-1,w,h+1); //draw white widget background
         popStyle();
+/*  pushMatrix();
+        box(width,height, 1); //draw white widget background
+        
+        translate(0,0,-20);
 
+        popMatrix(); */
+        
         //draw nav bars and button bars
         pushStyle();
         fill(150, 150, 150);
-        rect(x0, y0, w0, navH); //top bar
+        rect(x0, y0, w0, navH, BUTTON_ROUNDING); //top bar
         fill(200, 200, 200);
-        rect(x0, y0+navH, w0, navH); //button bar
+        rect(x0, y0+navH, w0, navH, BUTTON_ROUNDING); //button bar
         popStyle();
+       
     }
 
     public void addDropdown(String _id, String _title, List _items, int _defaultItem){
@@ -418,7 +426,7 @@ class ChannelSelect {
         if (showChannelText) {
             //change "Channels" text color and triangle color on hover
             if (channelSelectHover) {
-                fill(OPENBCI_BLUE);
+                fill(NEURO_TECH_BLACK);
             } else {
                 fill(0);
             }
@@ -434,7 +442,7 @@ class ChannelSelect {
                 triangle(tri_xpos, y - navH*0.25, tri_xpos + 5, y - navH*0.65, tri_xpos + 10, y - navH*0.25);
                 //if active, draw a grey background for the channel select checkboxes
                 fill(200);
-                rect(x,y,w,navH);
+                rect(x,y,w,navH, BUTTON_ROUNDING);
             }
         } else { //This is the case in Spectrogram where we need a second channel selector
             //check for state change
@@ -445,7 +453,7 @@ class ChannelSelect {
             //this draws extra grey space behind the checklist buttons
             if (isVisible) {
                 fill(200);
-                rect(x,y,w,navH);
+                rect(x,y,w,navH, BUTTON_ROUNDING);
             }
         }
         popStyle();

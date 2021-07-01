@@ -44,7 +44,7 @@ void draw() {
   translate(width/2,height/2,mouseX);
   rotateY(t+=0.1);
   fill(255);
-  rect(-50,-50,100,100);
+  rect(-50,-50,100,100, BUTTON_ROUNDING);
   popMatrix();
   hint(DISABLE_DEPTH_TEST);
   // in case yo uare using the camera or you have 

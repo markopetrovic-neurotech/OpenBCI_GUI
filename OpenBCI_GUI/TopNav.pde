@@ -14,7 +14,7 @@ import java.nio.file.*;
 
 class TopNav {
 
-    private final color TOPNAV_DARKBLUE = OPENBCI_BLUE;
+    private final color TOPNAV_DARKBLUE = NEURO_TECH_BLACK;
     private final color SUBNAV_LIGHTBLUE = buttonsLightBlue;
     private color strokeColor = OPENBCI_DARKBLUE;
 
@@ -52,6 +52,9 @@ class TopNav {
     private final int SUBNAV_BUT_W = 70;
     private final int SUBNAV_BUT_H = 26;
     private final int TOPNAV_BUT_H = SUBNAV_BUT_H;
+    
+    // hack to start stream after session and components are initialized
+    private Boolean startDefault = true;
 
     TopNav() {
         int controlPanel_W = 256;
@@ -101,7 +104,12 @@ class TopNav {
             createSmoothingButton(getSmoothingString(), pos_x, SUBNAV_BUT_Y, SUBNAV_BUT_W, SUBNAV_BUT_H, p5, 12, SUBNAV_LIGHTBLUE, WHITE);
         }
         
-        
+            /* startRunning();
+            if (currentBoard.isStreaming()) {
+                toggleDataStreamingButton.getCaptionLabel().setText(stopButton_pressToStop_txt);
+                toggleDataStreamingButton.setColorBackground(TURN_OFF_RED);
+                nextPlayback_millis = millis();  //used for synthesizeData and readFromFile.  This restarts the clock that keeps the playback at the right pace.
+            } */
         //updateSecondaryNavButtonsColor();
     }
 
@@ -126,13 +134,13 @@ class TopNav {
             updateGuiVersionButton.textColorNotActive = OPENBCI_DARKBLUE;
             configButton.textColorNotActive = OPENBCI_DARKBLUE;
         } else if (colorScheme == COLOR_SCHEME_ALTERNATIVE_A) {
-            controlPanelCollapser.setColorNotPressed(OPENBCI_BLUE);
-            debugButton.setColorNotPressed(OPENBCI_BLUE);
-            //highRezButton.setColorNotPressed(OPENBCI_BLUE);
-            issuesButton.setColorNotPressed(OPENBCI_BLUE);
-            shopButton.setColorNotPressed(OPENBCI_BLUE);
-            tutorialsButton.setColorNotPressed(OPENBCI_BLUE);
-            updateGuiVersionButton.setColorNotPressed(OPENBCI_BLUE);
+            controlPanelCollapser.setColorNotPressed(NEURO_TECH_BLACK);
+            debugButton.setColorNotPressed(NEURO_TECH_BLACK);
+            //highRezButton.setColorNotPressed(NEURO_TECH_BLACK);
+            issuesButton.setColorNotPressed(NEURO_TECH_BLACK);
+            shopButton.setColorNotPressed(NEURO_TECH_BLACK);
+            tutorialsButton.setColorNotPressed(NEURO_TECH_BLACK);
+            updateGuiVersionButton.setColorNotPressed(NEURO_TECH_BLACK);
             configButton.setColorNotPressed(SUBNAV_LIGHTBLUE);
 
             controlPanelCollapser.textColorNotActive = color(255);
@@ -200,6 +208,10 @@ class TopNav {
         //Make sure these buttons don't get accidentally locked
         if (systemMode >= SYSTEMMODE_POSTINIT) {
             setLockTopLeftSubNavCp5Objects(controlPanel.isOpen);
+            if(startDefault){
+             stopButtonWasPressed();
+             startDefault = false;;
+            }
         }
 
         if (previousSystemMode != systemMode) {
@@ -219,6 +231,7 @@ class TopNav {
             configSelector.update();
             previousSystemMode = systemMode;
         }
+        
     }
 
     void draw() {
@@ -226,7 +239,7 @@ class TopNav {
         color topNavBg;
         color subNavBg;
         if (colorScheme == COLOR_SCHEME_ALTERNATIVE_A) {
-            topNavBg = OPENBCI_BLUE;
+            topNavBg = NEURO_TECH_BLACK;
             subNavBg = SUBNAV_LIGHTBLUE;
             logo = logo_white;
         } else {
@@ -244,17 +257,17 @@ class TopNav {
         pushStyle();
         //stroke(OPENBCI_DARKBLUE);
         fill(topNavBg);
-        rect(0, 0, width, navBarHeight);
+        rect(0, 0, width, navBarHeight, BUTTON_ROUNDING);
         //noStroke();
         stroke(strokeColor);
         fill(subNavBg);
-        rect(-1, navBarHeight, width+2, navBarHeight);
+        rect(-1, navBarHeight, width+2, navBarHeight, BUTTON_ROUNDING);
         popStyle();
 
         //hide the center logo if buttons would overlap it
         if (width > 860) {
             //this is the center logo
-            image(logo, width/2 - (128/2) - 2, 6, 128, 22);
+            image(logo, width/2 - (128/2) - 2, 3, 130, 28);
         }
 
         //Draw these buttons during a Session
@@ -436,6 +449,7 @@ class TopNav {
                stopButtonWasPressed();
             }
         });
+        toggleDataStreamingButton.setCornerRoundness(20);
         toggleDataStreamingButton.setDescription("Press this button to Stop/Start the data stream. Or press <SPACEBAR>");
     }
 
@@ -665,12 +679,12 @@ class LayoutSelector {
             stroke(OPENBCI_DARKBLUE);
             // fill(229); //bg
             fill(57, 128, 204); //bg
-            rect(x, y, w, h);
+            rect(x, y, w, h, BUTTON_ROUNDING);
 
             fill(57, 128, 204);
             // fill(177, 184, 193);
             noStroke();
-            rect(x+w-(topNav.layoutButton.getWidth()-1), y, (topNav.layoutButton.getWidth()-1), 1);
+            rect(x+w-(topNav.layoutButton.getWidth()-1), y, (topNav.layoutButton.getWidth()-1), 1, BUTTON_ROUNDING);
 
             popStyle();
 
@@ -815,7 +829,7 @@ class ConfigSelector {
 
             stroke(OPENBCI_DARKBLUE);
             fill(57, 128, 204); //bg
-            rect(x, y, w, h);
+            rect(x, y, w, h, BUTTON_ROUNDING);
 
             boolean isSessionStarted = (systemMode == SYSTEMMODE_POSTINIT);
             saveSessionSettings.setVisible(isSessionStarted);
@@ -834,7 +848,7 @@ class ConfigSelector {
             fill(57, 128, 204);
             noStroke();
             //This makes the dropdown box look like it's apart of the button by drawing over the part that overlaps
-            rect(x+w-(topNav.settingsButton.getWidth()-1), y, (topNav.settingsButton.getWidth()-1), 1);
+            rect(x+w-(topNav.settingsButton.getWidth()-1), y, (topNav.settingsButton.getWidth()-1), 1, BUTTON_ROUNDING);
 
             popStyle();
 
@@ -1088,14 +1102,14 @@ class TutorialSelector {
 
             stroke(OPENBCI_DARKBLUE);
             // fill(229); //bg
-            fill(OPENBCI_BLUE); //bg
+            fill(NEURO_TECH_BLACK); //bg
             rect(x, y, w, h);
 
 
             // fill(177, 184, 193);
             noStroke();
             //Draw a tiny rectangle to make it look like the box and button are connected
-            rect(x+w-(topNav.tutorialsButton.getWidth()-1), y, (topNav.tutorialsButton.getWidth()-1), 1);
+            rect(x+w-(topNav.tutorialsButton.getWidth()-1), y, (topNav.tutorialsButton.getWidth()-1), 1, BUTTON_ROUNDING);
 
             popStyle();
 
