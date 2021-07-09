@@ -16,6 +16,8 @@ class TopNav {
 
     private final color TOPNAV_DARKBLUE = NEURO_TECH_BLACK;
     private final color SUBNAV_LIGHTBLUE = buttonsLightBlue;
+    private final color IMP_BUTTON_COLOR_GREEN = color(0, 156, 8);
+    private final color IMP_BUTTON_COLOR_RED = color(168, 0, 0);
     private color strokeColor = OPENBCI_DARKBLUE;
 
     private ControlP5 topNav_cp5;
@@ -28,6 +30,7 @@ class TopNav {
     public Button filtNotchButton;
     public Button smoothingButton;
 
+    public Button impedanceButton;
     public Button debugButton;
     public Button tutorialsButton;
     public Button shopButton;
@@ -43,15 +46,24 @@ class TopNav {
     private int previousSystemMode = 0;
 
     private boolean secondaryNavInit = false;
+    private boolean impedanceButtonIsGreen = false;
 
     private final int PAD_3 = 3;
     private final int DEBUG_BUT_W = 33;
     private final int TOPRIGHT_BUT_W = 80;
+    private final int IMP_BUT_W = 185;
     private final int DATASTREAM_BUT_W = 170;
     private final int SUBNAV_BUT_Y = 35;
     private final int SUBNAV_BUT_W = 70;
     private final int SUBNAV_BUT_H = 26;
     private final int TOPNAV_BUT_H = SUBNAV_BUT_H;
+
+    private float averageImpedance;
+    private final float MIN_IMPEDANCE_THREASHOLD = 15000;
+    private final float MAX_IMPEDANCE_THREASHOLD = 50000;
+    private final float IMPEDANCE_COLOR_CHANGE_THEREASHOLD = 23750;
+    private final String IMP_BUT_TEXT = "Impedance = ";
+    private final String IMP_BUT_NO_CONNECTION_TEXT = "No Connection";
     
     // hack to start stream after session and components are initialized
     private Boolean startDefault = true;
@@ -66,7 +78,6 @@ class TopNav {
 
         //TOP LEFT OF GUI
         createControlPanelCollapser("System Control Panel", PAD_3, PAD_3, controlPanel_W, TOPNAV_BUT_H, h3, 16, TOPNAV_DARKBLUE, WHITE);
-
         //TOP RIGHT OF GUI, FROM LEFT<---Right
         createDebugButton(" ", width - DEBUG_BUT_W - PAD_3, PAD_3, DEBUG_BUT_W, TOPNAV_BUT_H, h3, 16, TOPNAV_DARKBLUE, WHITE);
         createTutorialsButton("Help", (int)debugButton.getPosition()[0] - TOPRIGHT_BUT_W - PAD_3, PAD_3, TOPRIGHT_BUT_W, TOPNAV_BUT_H, h3, 16, TOPNAV_DARKBLUE, WHITE);
@@ -76,7 +87,7 @@ class TopNav {
 
         //SUBNAV TOP RIGHT
         createTopNavSettingsButton("Settings", width - SUBNAV_BUT_W - PAD_3, SUBNAV_BUT_Y, SUBNAV_BUT_W, SUBNAV_BUT_H, h4, 14, SUBNAV_LIGHTBLUE, WHITE);
-
+        createImpButton("Impedance = ", (width/2) - (IMP_BUT_W/2), SUBNAV_BUT_Y, IMP_BUT_W, SUBNAV_BUT_H, h3, 16, IMP_BUTTON_COLOR_RED, WHITE);
         layoutSelector = new LayoutSelector();
         tutorialSelector = new TutorialSelector();
         configSelector = new ConfigSelector();
@@ -201,7 +212,57 @@ class TopNav {
     }
     */
 
+    float getAverageElecImp() {
+        // data_elec_imp_ohm  for impedence values
+        float elec_imp_average = 0;
+        if (data_elec_imp_ohm != null) {
+            for (int i = 0; i < data_elec_imp_ohm.length; i++) {
+                elec_imp_average += data_elec_imp_ohm[i];
+            }
+            elec_imp_average = elec_imp_average/data_elec_imp_ohm.length;
+        }
+        return elec_imp_average;
+    }
+
+    String getImpedancePercentage(float f) {
+        float impedancePercent;
+        if (f == 0) {
+            impedancePercent = 0;
+        } else if(f <= MIN_IMPEDANCE_THREASHOLD) {
+            impedancePercent = 100;
+        } else if (f >= MAX_IMPEDANCE_THREASHOLD) {
+            impedancePercent = 0;
+        } else {
+            impedancePercent = (f - MIN_IMPEDANCE_THREASHOLD) * (100/(MAX_IMPEDANCE_THREASHOLD-MIN_IMPEDANCE_THREASHOLD));
+        }
+        String impedancePercentStr = String.format("%.02f", impedancePercent);
+        impedancePercentStr += "%";
+        return impedancePercentStr;
+    }
+
+    void changeImpedanceButtonColor() {
+        if (impedanceButtonIsGreen) {
+            impedanceButton.setColorBackground(IMP_BUTTON_COLOR_RED);
+            impedanceButtonIsGreen = false;
+        } else {
+            impedanceButton.setColorBackground(IMP_BUTTON_COLOR_GREEN);
+            impedanceButtonIsGreen = true;
+        }
+    }
+
     void update() {
+        averageImpedance = getAverageElecImp();
+        if (averageImpedance != 0) {
+            String roundedAverageImpedance = getImpedancePercentage(averageImpedance);
+            impedanceButton.getCaptionLabel().setText(IMP_BUT_TEXT + roundedAverageImpedance);
+            if ((averageImpedance > IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (impedanceButtonIsGreen)) {
+                changeImpedanceButtonColor();
+            } if ((averageImpedance < IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (!impedanceButtonIsGreen)) {
+                changeImpedanceButtonColor();
+            }
+        } else {
+            impedanceButton.getCaptionLabel().setText(IMP_BUT_NO_CONNECTION_TEXT);
+        }
         //ignore settings button when help dropdown is open
         settingsButton.setLock(tutorialSelector.isVisible);
 
@@ -572,6 +633,17 @@ class TopNav {
             }
         });
         updateGuiVersionButton.setVisible(false);
+    }
+
+    private void createImpButton(String text, int _x, int _y, int _w, int _h, PFont font, int _fontSize, color _bg, color _textColor) {
+        impedanceButton = createTNButton("impedanceButton", text, _x, _y, _w, _h, font, _fontSize, _bg, _textColor);
+        impedanceButton.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+               if (controlPanel.drawStopInstructions) {
+                   //open headplot
+               }
+            }
+        });
     }
 
     private void createTopNavSettingsButton(String text, int _x, int _y, int _w, int _h, PFont font, int _fontSize, color _bg, color _textColor) {

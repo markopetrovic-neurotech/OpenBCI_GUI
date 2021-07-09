@@ -17,14 +17,6 @@ int smoothFac_ind = 3;    //initial index into the smoothFac array = 0.75 to sta
 
 class W_HeadPlot extends Widget {
     HeadPlot headPlot;
-    public ControlP5 cp5;
-    public Button continueButton;
-    public boolean continueButtonAvailable = false;
-    private color continueButtonColorRed = color(168, 0, 0);
-    private color continueButtonColorGreen = color(0, 156, 8);
-    private final int buttonWidth = 120;
-    private final int buttonHeight = 40;
-    private final int padding = 20;
 
     W_HeadPlot(PApplet _parent){
         super(_parent); //calls the parent CONSTRUCTOR method of Widget (DON'T REMOVE)
@@ -43,43 +35,8 @@ class W_HeadPlot extends Widget {
         //addDropdown("Polarity", "Polarity", Arrays.asList("+/-", " + "), settings.hpPolaritySave);
         addDropdown("ShowContours", "Contours", Arrays.asList("ON", "OFF"), settings.hpContoursSave);
         //addDropdown("SmoothingHeadPlot", "Smooth", Arrays.asList("0.0", "0.5", "0.75", "0.9", "0.95", "0.98"), smoothFac_ind);
-        //create continue button
-        //createContinueButton();
         //Initialize the headplot
         updateHeadPlot(nchan);
-    }
-
-    void createContinueButton() {
-        cp5 = new ControlP5(ourApplet);
-        continueButton = cp5.addButton("Continue")
-            .setPosition(width/1.1 - buttonWidth, height/3 - buttonHeight - padding)
-            .setSize(buttonWidth, buttonHeight)
-            .setFont(p1)
-            .setCornerRoundness(15);
-        cp5.getController("Continue")
-            .getCaptionLabel()
-            .toUpperCase(false)
-            .setSize(24);
-    }
-
-    void onContinueButtonPressed() {
-        if (continueButtonAvailable) {
-            changeContinueButtonColorToRed();
-        } else {
-            changeContinueButtonColorToGreen();
-        }
-    }
-
-    void changeContinueButtonColorToRed() {
-        continueButtonAvailable = false;
-        continueButton.setColorBackground(continueButtonColorRed)
-            .setColorForeground(continueButtonColorRed);
-    }
-
-    void changeContinueButtonColorToGreen() {
-        continueButtonAvailable = true;
-        continueButton.setColorBackground(continueButtonColorGreen)
-            .setColorForeground(continueButtonColorGreen);
     }
 
     void updateHeadPlot(int _nchan) {
@@ -134,9 +91,6 @@ class W_HeadPlot extends Widget {
     void mouseReleased(){
         super.mouseReleased(); //calls the parent mouseReleased() method of Widget (DON'T REMOVE)
         headPlot.mouseReleased();
-        /* if(cp5.isMouseOver(cp5.getController("Continue"))) {
-            onContinueButtonPressed();
-        } */
     }
 
     void mouseDragged(){
