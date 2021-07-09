@@ -74,12 +74,12 @@ class Widget{
         popMatrix(); */
         
         //draw nav bars and button bars
-        pushStyle();
+     /*    pushStyle();
         fill(150, 150, 150);
         rect(x0, y0, w0, navH, BUTTON_ROUNDING); //top bar
         fill(200, 200, 200);
         rect(x0, y0+navH, w0, navH, BUTTON_ROUNDING); //button bar
-        popStyle();
+        popStyle(); */
        
     }
 
