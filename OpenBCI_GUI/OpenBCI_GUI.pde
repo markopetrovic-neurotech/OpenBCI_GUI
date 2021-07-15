@@ -54,7 +54,7 @@ import edu.ucsd.sccn.LSL; //for LSL
 import com.fazecast.jSerialComm.*; //Helps distinguish serial ports on Windows
 import org.apache.commons.lang3.time.StopWatch;
 import http.requests.*;
-
+import com.jogamp.newt.opengl.*;
 
 //------------------------------------------------------------------------
 //                       Global Variables & Instances
@@ -214,6 +214,10 @@ PFont p1; //large Open Sans
 PFont p2; //large/medium Open Sans
 PFont p3; //medium Open Sans
 PFont p15;
+
+PFont edition;
+PFont sansation;
+
 static PFont p4; //medium/small Open Sans
 PFont p13;
 static PFont p5; //small Open Sans
@@ -228,7 +232,7 @@ final color boxColor = color(200);
 final color boxStrokeColor = OPENBCI_DARKBLUE;
 final color isSelected_color = color(184, 220, 105);
 final color colorNotPressed = color(255);
-final color buttonsLightBlue = color(0, 0, 0);
+final color buttonsLightBlue = color(72, 72, 93);
 final color TURN_ON_GREEN = color(184,220,105);
 final color WHITE = color(255);
 final color BLACK = color(0);
@@ -256,6 +260,10 @@ WidgetManager wm;
 boolean wmVisible = true;
 CColor cp5_colors;
 public PShape head;
+public PShape headphones;
+/* public PGraphics sceneHead;
+public PGraphics sceneElec; */
+
 
 //Channel Colors -- Defaulted to matching the OpenBCI electrode ribbon cable
 final color[] channelColors = {
@@ -309,6 +317,7 @@ void settings() {
         win_h = 580;
     }
     size(win_w, win_h, P3D);
+    smooth(8);
 }
 
 
@@ -317,31 +326,38 @@ void setup() {
 
     copyPaste = new CopyPaste();
  
+/*     sceneHead = createGraphics(width, height, P3D);
+    sceneElec = createGraphics(width, height, P3D); */
+
     // 3D MODELS
-    head = loadShape("head.obj");
-
+    head = loadShape("mannequin.obj");
+    
+    //headphones = loadShape("headphones.obj");
     //V1 FONTS
-    f1 = createFont("fonts/Raleway-SemiBold.otf", 16);
-    f2 = createFont("fonts/Raleway-Regular.otf", 15);
-    f3 = createFont("fonts/Raleway-SemiBold.otf", 15);
-    f4 = createFont("fonts/Raleway-SemiBold.otf", 64);  // clear bigger fonts for widgets
+    f1 = createFont("fonts/AquireLight.otf", 16);
+    f2 = createFont("fonts/AquireLight.otf", 15);
+    f3 = createFont("fonts/AquireLight.otf", 15);
+    f4 = createFont("fonts/AquireLight.otf", 64);  // clear bigger fonts for widgets
 
-    h1 = createFont("fonts/Montserrat-Regular.otf", 20);
-    h2 = createFont("fonts/Montserrat-Regular.otf", 18);
-    h3 = createFont("fonts/Montserrat-Regular.otf", 16);
-    h4 = createFont("fonts/Montserrat-Regular.otf", 14);
-    h5 = createFont("fonts/Montserrat-Regular.otf", 12);
+    h1 = createFont("fonts/AquireLight.otf", 20);
+    h2 = createFont("fonts/AquireLight.otf", 18);
+    h3 = createFont("fonts/AquireLight.otf", 16);
+    h4 = createFont("fonts/AquireLight.otf", 14);
+    h5 = createFont("fonts/AquireLight.otf", 12);
 
-    p0 = createFont("fonts/OpenSans-Semibold.ttf", 24);
-    p1 = createFont("fonts/OpenSans-Regular.ttf", 20);
-    p2 = createFont("fonts/OpenSans-Regular.ttf", 18);
-    p3 = createFont("fonts/OpenSans-Regular.ttf", 16);
-    p15 = createFont("fonts/OpenSans-Regular.ttf", 15);
-    p4 = createFont("fonts/OpenSans-Regular.ttf", 14);
-    p13 = createFont("fonts/OpenSans-Regular.ttf", 13);
-    p5 = createFont("fonts/OpenSans-Regular.ttf", 12);
-    p6 = createFont("fonts/OpenSans-Regular.ttf", 10);
-
+    p0 = createFont("fonts/AquireLight.otf", 24);
+    p1 = createFont("fonts/AquireLight.otf", 20);
+    p2 = createFont("fonts/AquireLight.otf", 18);
+    p3 = createFont("fonts/AquireLight.otf", 16);
+    p15 = createFont("fonts/AquireLight.otf", 15);
+    p4 = createFont("fonts/AquireLight.otf", 14);
+    p13 = createFont("fonts/AquireLight.otf", 13);
+    p5 = createFont("fonts/AquireLight.otf", 12);
+    p6 = createFont("fonts/AquireLight.otf", 10);
+    loadingGIF = new Gif(this, "neuro_load.gif");
+    loadingGIF.loop();
+    edition = createFont("fonts/Edition.ttf", 16);
+    sansation = createFont("fonts/Sansation-Regular.ttf", 20);
     loadingImage = loadImage("neuro_image.png");
 
     // check if the current directory is writable
@@ -396,11 +412,30 @@ void setup() {
     // start drawing until delayed setup is done.
     thread("delayedSetup");
 }
-
+/* void removeButtonsFromWindow(Component comp) {
+  println(comp);
+  if (comp instanceof Button) {
+    int todo; //TODO only remove the exit button.
+    comp.getParent().remove(comp);
+  }
+  if (comp instanceof Container) {
+    Component[] comps = ((Container) comp).getComponents();
+    for (int i = 0; i < comps.length; i++) {
+      removeButtonsFromWindow(comps[i]);
+    }
+  }
+} */
 void delayedSetup() {
-    smooth(); //turn this off if it's too slow
+    //smooth(8); //turn this off if it's too slow
 
-    surface.setResizable(true);  //updated from frame.setResizable in Processing 2
+    surface.setResizable(false);  //updated from frame.setResizable in Processing 2
+     //PSurfaceAWT.SmoothCanvas canvas = (PSurfaceAWT.SmoothCanvas) surface.getNative();
+   // canvas.getFrame().setUndecorated(true);
+   // System.out.println(surface.getNative().getClass());
+     GLWindow gl = (GLWindow)surface.getNative();
+
+    //removeButtonsFromWindow(gl);
+    //surface.getNative().getParent().setUndecorated(true);
     settings.widthOfLastScreen = width; //for screen resizing (Thank's Tao)
     settings.heightOfLastScreen = height;
 
@@ -418,8 +453,7 @@ void delayedSetup() {
     logo_white = loadImage("logo_white.png");
     consoleImgBlue = loadImage("console-45x45-dots_blue.png");
     consoleImgWhite = loadImage("console-45x45-dots_white.png");
-    loadingGIF = new Gif(this, "ajax_loader_gray_512.gif");
-    loadingGIF.loop();
+    
     loadingGIF_blue = new Gif(this, "OpenBCI-LoadingGIF-blue-256.gif");
     loadingGIF_blue.loop();
 
@@ -929,7 +963,7 @@ void introAnimation() {
         verbosePrint(String.valueOf(transparency));
         tint(255, transparency);
         //draw OpenBCI Logo Front & Center
-        image(loadingImage, width/2, height/2, width/6, width/6);
+        image(loadingGIF, width/2, height/2, width/6, width/6);
         textFont(p3, 16);
         textLeading(24);
         fill(31, 69, 110, transparency);

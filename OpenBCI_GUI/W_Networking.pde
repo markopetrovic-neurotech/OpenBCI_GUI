@@ -142,7 +142,7 @@ class W_Networking extends Widget {
         settings.nwDataType2 = 0;
         settings.nwDataType3 = 0;
         settings.nwDataType4 = 0;
-        settings.nwSerialPort = "None";
+        settings.nwSerialPort = "7239";
         settings.nwProtocolSave = 4; //save default protocol index, or 0, updates in the Protocol() function
         
         dataTypes = new LinkedList<String>(Arrays.asList(settings.nwDataTypesArray)); //Add any new widgets capable of streaming here
@@ -153,7 +153,7 @@ class W_Networking extends Widget {
         defaultBaud = "57600";
         baudRates = Arrays.asList(settings.nwBaudRatesArray);
         protocolMode = "TCP"; //default to Serial
-        addDropdown("Protocol", "Protocol", Arrays.asList(settings.nwProtocolArray), protocolIndex);
+        //addDropdown("Protocol", "Protocol", Arrays.asList(settings.nwProtocolArray), protocolIndex);
         comPorts = new ArrayList<String>(Arrays.asList(Serial.list()));
         verbosePrint("comPorts = " + comPorts);
         comPortToSave = 0;
@@ -169,6 +169,7 @@ class W_Networking extends Widget {
         
         dataBufferToSend = new float[currentBoard.getNumEXGChannels()][nPointsPerUpdate];
         dataAccumulationQueue = new LinkedList<double[]>();
+        System.out.println(protocolMode);
     }
 
     //Used to update the Hashmap
@@ -324,10 +325,10 @@ class W_Networking extends Widget {
 
         cp5_networking.draw();
 
-        if (protocolMode.equals("Serial")) {
+        if (protocolMode.equals("TCP")) {
             cp5_networking_portName.draw();
-            cp5_networking_baudRate.draw();
-        }
+            //cp5_networking_baudRate.draw();
+        } 
         
         cp5_networking_dropdowns.draw();
 
@@ -376,7 +377,7 @@ class W_Networking extends Widget {
             text("Filters",column0,row3);
         }else if (protocolMode.equals("TCP")) {
             textFont(f4,40);
-            text("TCP", x+20,y+h/8+15);
+            text("NeuroSocket API", x+20,y+h/8+15);
             textFont(h1,headerFontSize);
             text("IP", column0,row2);
             text("Port", column0,row3);
@@ -445,7 +446,7 @@ class W_Networking extends Widget {
         setTextFieldVisible(udpTextFieldNames, udp_visible);
         setTextFieldVisible(lslTextFieldNames, lsl_visible);
 
-        cp5_networking_portName.get(ScrollableList.class, "port_name").setVisible(serial_visible);
+        cp5_networking_portName.get(ScrollableList.class, "port_name").setVisible(true);
         cp5_networking_baudRate.get(ScrollableList.class, "baud_rate").setVisible(serial_visible);
 
         cp5_networking_dropdowns.get(ScrollableList.class, "dataType1").setVisible(true);
@@ -453,8 +454,8 @@ class W_Networking extends Widget {
             cp5_networking_dropdowns.get(ScrollableList.class, "dataType2").setVisible(true);
             cp5_networking_dropdowns.get(ScrollableList.class, "dataType3").setVisible(true);
         } else{
-            cp5_networking_dropdowns.get(ScrollableList.class, "dataType2").setVisible(false);
-            cp5_networking_dropdowns.get(ScrollableList.class, "dataType3").setVisible(false);
+            cp5_networking_dropdowns.get(ScrollableList.class, "dataType2").setVisible(true);
+            cp5_networking_dropdowns.get(ScrollableList.class, "dataType3").setVisible(true);
         }
 
         //Draw a 4th Data Type dropdown menu if we are using OSC!
@@ -592,12 +593,14 @@ class W_Networking extends Widget {
                 output("Opening Networking Widget Guide using default browser.");
             }
         });
+        guideButton.setVisible(false);
         guideButton.setDescription("Click to open the Networking Widget Guide in your default browser.");
     }
 
     void createDataOutputsButton() {
         dataOutputsButton = createButton(cp5_networking, "dataOutputsButton", "Data Outputs", x0 + 2*2 + guideButton.getWidth(), y0 + navH + 2, 100, navH - 6, p5, 12, colorNotPressed, OPENBCI_DARKBLUE);
         dataOutputsButton.setBorderColor(OBJECT_BORDER_GREY);
+        dataOutputsButton.setVisible(false);
         dataOutputsButton.onRelease(new CallbackListener() {
             public void controlEvent(CallbackEvent theEvent) {
                 openURLInBrowser(dataOutputsURL);
@@ -805,7 +808,7 @@ class W_Networking extends Widget {
             cp5_networking.get(Toggle.class, "filter2").setPosition(column2 + filtOffsetX, row5 + filtOffsetY);
             cp5_networking.get(Toggle.class, "filter3").setPosition(column3 + filtOffsetX, row5 + filtOffsetY);
             cp5_networking.get(Toggle.class, "filter4").setPosition(column4 + filtOffsetX, row5 + filtOffsetY);
-        } else if (protocolMode.equals("UDP")) {
+        } else if (protocolMode.equals("TCP")) {
             for (String textField : udpTextFieldNames) {
                 cp5_networking.get(Textfield.class, textField).setWidth(itemWidth);
             }
@@ -831,14 +834,14 @@ class W_Networking extends Widget {
             cp5_networking.get(Toggle.class, "filter1").setPosition(column1 + filtOffsetX, row4 + filtOffsetY);
             cp5_networking.get(Toggle.class, "filter2").setPosition(column2 + filtOffsetX, row4 + filtOffsetY);
             cp5_networking.get(Toggle.class, "filter3").setPosition(column3 + filtOffsetX, row4 + filtOffsetY);
-        } else if (protocolMode.equals("Serial")) {
+        } else if (protocolMode.equals("TCP")) {
             //Serial Specific
             cp5_networking_baudRate.get(ScrollableList.class, "baud_rate").setPosition(column1, row2-offset);
-            // cp5_networking_portName.get(ScrollableList.class, "port_name").setPosition(column1, row3-offset);
+            cp5_networking_portName.get(ScrollableList.class, "port_name").setPosition(column1, row3-offset);
             cp5_networking_portName.get(ScrollableList.class, "port_name").setPosition(column2, row2-offset);
             cp5_networking_baudRate.get(ScrollableList.class, "baud_rate").setSize(itemWidth, (baudRates.size()+1)*(navH-4));
-            // cp5_networking_portName.get(ScrollableList.class, "port_name").setSize(fullColumnWidth, (comPorts.size()+1)*(navH-4));
-            // cp5_networking_portName.get(ScrollableList.class, "port_name").setSize(fullColumnWidth, (4)*(navH-4)); //
+            cp5_networking_portName.get(ScrollableList.class, "port_name").setSize(fullColumnWidth, (comPorts.size()+1)*(navH-4));
+            cp5_networking_portName.get(ScrollableList.class, "port_name").setSize(fullColumnWidth, (4)*(navH-4)); //
             cp5_networking_portName.get(ScrollableList.class, "port_name").setSize(halfWidth, (5)*(navH-4)); //halfWidth
             cp5_networking.get(Toggle.class, "filter1").setPosition(column1 + filtOffsetX, row3 + filtOffsetY);
         }

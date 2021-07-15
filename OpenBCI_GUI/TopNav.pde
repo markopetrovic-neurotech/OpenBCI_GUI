@@ -327,26 +327,28 @@ class TopNav {
         pushStyle();
         //stroke(OPENBCI_DARKBLUE);
         fill(topNavBg);
-        rect(0, 0, width, navBarHeight, BUTTON_ROUNDING);
+        rect(0, 0, width, navBarHeight);
         //noStroke();
         stroke(strokeColor);
         fill(subNavBg);
-        rect(-1, navBarHeight, width+2, navBarHeight, BUTTON_ROUNDING);
+        rect(-1, navBarHeight, width+2, navBarHeight);
         popStyle();
 
         //hide the center logo if buttons would overlap it
         if (width > 860) {
             //this is the center logo
-            image(logo, width/2 - (128/2) - 2, 3, 130, 28);
+            //image(logo, width/2 - (128/2) - 2, 3, 28, 28);
+            image(logo, width/2 - 60 , 3, 120, 28);
+
         }
 
         //Draw these buttons during a Session
         boolean isSession = systemMode == SYSTEMMODE_POSTINIT;
         if (secondaryNavInit) {
-            toggleDataStreamingButton.setVisible(isSession);
+            toggleDataStreamingButton.setVisible(false);
             filtBPButton.setVisible(isSession);
             filtNotchButton.setVisible(isSession);
-            layoutButton.setVisible(isSession);
+            layoutButton.setVisible(false);
            
         }
         if (smoothingButton != null) {
@@ -362,9 +364,9 @@ class TopNav {
         configSelector.draw();
 
         //Draw Console Log Image on top of cp5 object
-        PImage _logo = (colorScheme == COLOR_SCHEME_DEFAULT) ? consoleImgBlue : consoleImgWhite;
+       /*  PImage _logo = (colorScheme == COLOR_SCHEME_DEFAULT) ? consoleImgBlue : consoleImgWhite;
         image(_logo, debugButton.getPosition()[0] + 6, debugButton.getPosition()[1] + 2, 22, 22);        
-        
+         */
 
     }
 
@@ -502,6 +504,7 @@ class TopNav {
         controlPanelCollapser = createTNButton("controlPanelCollapser", text, _x, _y, _w, _h, font, _fontSize, _bg, _textColor);
         controlPanelCollapser.setSwitch(true);
         controlPanelCollapser.setOn();
+        controlPanelCollapser.setCornerRoundness(20);
         controlPanelCollapser.onRelease(new CallbackListener() {
             public void controlEvent(CallbackEvent theEvent) {
                if (controlPanelCollapser.isOn()) {
@@ -521,6 +524,7 @@ class TopNav {
             }
         });
         toggleDataStreamingButton.setCornerRoundness(20);
+        toggleDataStreamingButton.setVisible(false);
         toggleDataStreamingButton.setDescription("Press this button to Stop/Start the data stream. Or press <SPACEBAR>");
     }
 
@@ -570,6 +574,7 @@ class TopNav {
                 }
             }
         });
+        layoutButton.setVisible(false);
         layoutButton.setDescription("Here you can alter the overall layout of the GUI, allowing for different container configurations with more or less widgets.");
     }
 
@@ -580,6 +585,7 @@ class TopNav {
                ConsoleWindow.display();
             }
         });
+        debugButton.setVisible(false);
         debugButton.setDescription("Click to open the Console Log window.");
     }
 
@@ -590,6 +596,7 @@ class TopNav {
                tutorialSelector.toggleVisibility();
             }
         });
+        tutorialsButton.setVisible(false);
         tutorialsButton.setDescription("Click to find links to helpful online tutorials and getting started guides. Also, check out how to create custom widgets for the GUI!");
     }
 
@@ -601,6 +608,7 @@ class TopNav {
                openURLInBrowser("https://github.com/OpenBCI/OpenBCI_GUI/issues");
             }
         });
+        issuesButton.setVisible(false);
         issuesButton.setDescription("If you have suggestions or want to share a bug you've found, please create an issue on the GUI's Github repo!");
     }
 
@@ -611,6 +619,7 @@ class TopNav {
                openURLInBrowser("https://shop.openbci.com/");
             }
         });
+        shopButton.setVisible(false);
         shopButton.setDescription("Head to our online store to purchase the latest OpenBCI hardware and accessories.");
     }
 
@@ -633,6 +642,7 @@ class TopNav {
                 }
             }
         });
+        updateGuiVersionButton.setVisible(false);
     }
 
     private void createImpButton(String text, int _x, int _y, int _w, int _h, PFont font, int _fontSize, color _bg, color _textColor) {
@@ -654,6 +664,7 @@ class TopNav {
                 }   
             }
         });
+        settingsButton.setVisible(false);
         settingsButton.setDescription("Save and Load GUI Settings! Click Default to revert to factory settings.");
     }
 

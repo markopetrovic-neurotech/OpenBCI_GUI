@@ -22,7 +22,7 @@ class W_HeadPlot extends Widget {
         super(_parent); //calls the parent CONSTRUCTOR method of Widget (DON'T REMOVE)
 
         //Headplot settings
-        settings.hpIntensitySave = 2;
+        settings.hpIntensitySave =5 ;
         settings.hpPolaritySave = 0;
         settings.hpContoursSave = 1;
         settings.hpSmoothingSave = 3;
@@ -42,8 +42,21 @@ class W_HeadPlot extends Widget {
     void updateHeadPlot(int _nchan) {
         headPlot = new HeadPlot(x, y, w, h, win_w, win_h);
         //FROM old Gui_Manager
+        // data_elec_imp_ohm  for impedence values, TODO: trigger by button/ui flow
+        //get average of data_elec_imp
+        float elec_imp_average = 0;
+        for (int i = 0; i < data_elec_imp_ohm.length; i++) {
+            elec_imp_average += data_elec_imp_ohm[i];
+        }
+        elec_imp_average = elec_imp_average/data_elec_imp_ohm.length;
+        //change continue button color if elec_imp_average high enough
+        /* if (elec_imp_average < 5) {
+            changeContinueButtonColorToGreen();
+        } else {
+            changeContinueButtonColorToRed();
+        } */
         //dataProcessing.data_std_uV
-        headPlot.setIntensityData_byRef( dataProcessing.data_std_uV, is_railed);
+        headPlot.setIntensityData_byRef(data_elec_imp_ohm, is_railed);
         headPlot.setPolarityData_byRef(dataProcessing.polarity);
         setSmoothFac(smoothFac[smoothFac_ind]);
     }
@@ -205,6 +218,9 @@ class HeadPlot {
     public boolean hardCalcsDone = false;
     public boolean threadLock = false;
     Table elec_relXYZ = new Table();
+    public int shiftX = 5;
+    public float fov = PI/3.0;
+    public float cameraZ = (height/2.0) / tan(fov/2.0);
 
     HeadPlot(int _x, int _y, int _w, int _h, int _win_x, int _win_y) {
         final int n_elec = nchan;  //set number of electrodes using the global nchan variable
@@ -223,7 +239,8 @@ class HeadPlot {
         hp_win_x = _win_x;
         hp_win_y = _win_y;
         thread("doHardCalcs");
-        setMaxIntensity_uV(200.0f);  //default intensity scaling for electrodes
+        System.out.println("width: " + width + "height: " + height);
+        setMaxIntensity_uV(200.f);  //default intensity scaling for electrodes
     }
 
     public void setPositionSize(int _x, int _y, int _w, int _h, int _win_x, int _win_y) {
@@ -259,7 +276,7 @@ class HeadPlot {
 
     public void setMaxIntensity_uV(float val_uV) {
         intense_max_uV = val_uV;
-        intense_min_uV = intense_max_uV / 200.0 * 5.0f;  //set to 200, get 5
+        intense_min_uV = 25.0f;  //set to 200, get 5
         assumed_railed_voltage_uV = intense_max_uV;
 
         log10_intense_max_uV = log10(intense_max_uV);
@@ -1094,8 +1111,8 @@ class HeadPlot {
         //make the intensity fade NOT from black->color, but from white->color
         for (int i=0; i < 3; i++) {
             val = ((float)new_rgb[i]) / 255.f;
-            new_rgb[i] = ((val + (1.0f - val)*(1.0f-intensity))*255.f); //adds in white at low intensity.  no white at high intensity
-            new_rgb[i] = constrain(new_rgb[i], 0.0, 255.0);
+            new_rgb[1] = ((val + (1.0f - val)*(1.0f-intensity))/255.f); //adds in white at low intensity.  no white at high intensity
+            new_rgb[1] = constrain(255.0 - new_rgb[1], 0, new_rgb[1]);
         }
 
         //quantize the color to make contour-style plot?
@@ -1142,11 +1159,12 @@ class HeadPlot {
         //int rgb[] = new int[]{57, 238, 88}; //color for the electrode when fully light
         
         int rgb[] = new int[]{255, 0, 0}; //color for the electrode when fully light
+        
         float intensity;
         float val;
         int new_rgb[] = new int[3];
-        float low = intense_min_uV;
-        float high = intense_max_uV;
+        float low = 50.f;
+        float high = 1000.f;
         float log_low = log10_intense_min_uV;
         float log_high = log10_intense_max_uV;
         for (int Ielec=0; Ielec < electrode_xy.length; Ielec++) {
@@ -1159,18 +1177,40 @@ class HeadPlot {
 
             //make the intensity fade NOT from black->color, but from white->color
             for (int i=0; i < 3; i++) {
-                val = ((float)rgb[i]) / 255.f;
+               // println(intensity);
+                //val = ((float)rgb[i]);
+               //if(electrode_rgb[i][Ielec] ==)
+         
+                val =  electrode_rgb[i][Ielec];
+                if(i == 1 ){
+                if(intensity >= 0.5){
+                    val =  (255.0f -  electrode_rgb[0][Ielec]);
+                }
+                }
+                if(i == 0 ){
+                 if(intensity < 0.5){
+                     val =  (255.0f -  electrode_rgb[1][Ielec]);
+                }
+                }
                 new_rgb[i] = (int)((val + (1.0f - val)*(1.0f-intensity))*255.f); //adds in white at low intensity.  no white at high intensity
-                new_rgb[i] = constrain(new_rgb[i], new_rgb[i], 255);
+                new_rgb[i] = constrain(new_rgb[i], 0, 255);
             }
 
-            //change color to dark RED if railed
-            if (is_railed[Ielec].is_railed)  new_rgb = new int[]{127, 0, 0};
+           // change color to dark RED if railed
+            /* if (is_railed[Ielec].is_railed) 
+            { 
+                new_rgb = new int[]{255, 0, 0};
+            } */
 
             //set the electrode color
             electrode_rgb[0][Ielec] = new_rgb[0];
             electrode_rgb[1][Ielec] = new_rgb[1];
-            electrode_rgb[2][Ielec] = new_rgb[2];
+            electrode_rgb[2][Ielec] = 0;
+
+           // System.out.println(electrode_rgb[0][Ielec]);
+             /* electrode_rgb[0][Ielec] = 255- new_rgb[0];
+            electrode_rgb[1][Ielec] = new_rgb[0];
+            electrode_rgb[2][Ielec] = new_rgb[2]; */
         }
     }
 
@@ -1237,33 +1277,40 @@ class HeadPlot {
     }
 
     public void draw() {
-
-        pushStyle();
-        smooth();
+        //beginCamera();
+       // pushStyle();
+        
         //draw head parts
-        fill(255, 255, 255);
-        stroke(125, 125, 125);
+        //fill(255, 255, 255);
+        //stroke(125, 125, 125);
        // triangle(nose_x[0], nose_y[0], nose_x[1], nose_y[1], nose_x[2], nose_y[2]);  //nose
        // ellipse(earL_x, earL_y, ear_width, ear_height); //little circle for the ear
       //  ellipse(earR_x, earR_y, ear_width, ear_height); //little circle for the ear
 
         //draw head itself
+      //      noStroke();
 
-      
+     
         
-        if (drawHeadAsContours) {
+       /*  if (drawHeadAsContours) {
             //add the contnours
             image(headImage, image_x, image_y);
             //texture(headImage);
             noFill(); //overlay a circle as an outline, but no fill
             strokeWeight(1);
             ellipse(circ_x, circ_y, circ_diam, circ_diam); //big circle for the head
-        }
+        } */
       
         //draw electrodes on the head
         if (!isDragging) {
             mouse_over_elec_index = -1;
         }
+        fill(0,0,0);
+        textFont(sansation);
+        text("Adjust electrode contacts for", 15, 180);
+        text("optimal connection quality", 16, 200);
+
+        pushMatrix();
         for (int Ielec=0; Ielec < electrode_xy.length; Ielec++) {
             pushMatrix(); 
             if (drawHeadAsContours) {
@@ -1285,9 +1332,17 @@ class HeadPlot {
          
             translate(electrode_xy[Ielec][0], electrode_xy[Ielec][1], elec_relXYZ.getFloat(Ielec, 2));
             lights();
-            sphere(elec_diam/2.2); //electrode circle
+           
+            
+            /* for(int i = 0; i<1000; i++){
+               translate(0,0,10); 
+            } */
+            
+            sphere(elec_diam/3); //electrode circle
             popMatrix();
          }
+          rotateY(PI/6);
+        popMatrix();
 
         pushMatrix();     
         fill(255, 255, 255, 255);  //fill in a white head
@@ -1295,23 +1350,25 @@ class HeadPlot {
        // translate(circ_x, circ_y , -200);
         lights();
         //* .86602
-        float fov = PI/3.0;
-        float cameraZ = (height/2.0) / tan(fov/2.0);
-        perspective(fov, float(width) / float(height), cameraZ/100.0, cameraZ*100.0);
+       
+        
         /*  camera(circ_x, circ_x, 0,
                 0, 0, 0,
                 0, 0, 0);  */
         scale(40);
-      //  rotateX(radians(-35));
-        //
-      
+        
+        // perspective(fov, float(width) / float(height), cameraZ/100.0, cameraZ*100.0);
+        perspective(fov, float(width) / float(height), cameraZ/100.0, cameraZ*100.0);
        // println(modelX(0, 0, 0));  
-        translate(13,20, -5);
+        translate(12.8,18, -5);
         rotateZ(PI);
-
+        rotateX(radians(15));
+        //rotateY(-PI/24);
         ////sphere(circ_diam/1.5); //big circle for the head
         shape(head);
+         
         popMatrix();
+
         //add labels to electrodes
        /*  fill(0, 0, 0);
         textFont(font);
@@ -1321,7 +1378,14 @@ class HeadPlot {
             text(i+1, electrode_xy[i][0], electrode_xy[i][1]);
         }
         text("R", ref_electrode_xy[0], ref_electrode_xy[1]);
- */
-        popStyle();
+
+        
+ */     
+       
+        
+      //  popStyle();
+        //head.rotateY(mouseX);
+       //  camera(mouseX, height/2, (height/2) / tan(PI/6), mouseX, height/2, 0, 0, 1, 0);
+       //endCamera();
     } //end of draw method
 };

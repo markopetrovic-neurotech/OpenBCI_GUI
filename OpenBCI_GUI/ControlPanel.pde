@@ -263,7 +263,7 @@ class ControlPanel {
             rect(x, y, w, dataSourceBox.h, BUTTON_ROUNDING); //draw background of box
             String stopInstructions = "Press the \"STOP SESSION\" button to change your data source or edit system settings.";
             textAlign(CENTER, TOP);
-            textFont(p4, 14);
+            textFont(sansation, 14);
             fill(OPENBCI_DARKBLUE);
             text(stopInstructions, x + globalPadding*2, y + globalPadding*3, w - globalPadding*4, dataSourceBox.h - globalPadding*4);
             popStyle();
@@ -321,7 +321,7 @@ class DataSourceBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("DATA SOURCE", x + padding, y + padding);
         popStyle();
@@ -330,7 +330,7 @@ class DataSourceBox {
     }
 
     private void createDatasourceList(ControlP5 _cp5, String name, int _x, int _y, int _w, int _h, PFont font) {
-        sourceList = new MenuList(_cp5, name, _w, _h, font);
+        sourceList = new MenuList(_cp5, name, _w, _h, sansation);
         sourceList.setPosition(_x, _y);
         // sourceList.itemHeight = 28;
         // sourceList.padding = 9;
@@ -411,7 +411,7 @@ class SerialBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("SERIAL CONNECT", x + padding, y + padding);
         popStyle();
@@ -503,7 +503,7 @@ class ComPortBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("SERIAL/COM PORT", x + padding, y + padding);
         popStyle();
@@ -521,7 +521,7 @@ class ComPortBox {
     }
 
     private void createCytonDongleList(ControlP5 _cp5, String name, int _x, int _y, int _w, int _h, PFont font) {
-        serialList = new MenuList(_cp5, name, _w, _h, font);
+        serialList = new MenuList(_cp5, name, _w, _h, sansation);
         serialList.setPosition(_x, _y);
         serialList.addCallback(new CallbackListener() {
             public void controlEvent(CallbackEvent theEvent) {
@@ -645,7 +645,7 @@ class BLEBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("BLE DEVICES", x + padding, y + padding);
         popStyle();
@@ -726,7 +726,7 @@ class BLEBox {
     }
 
     private void createGanglionBLEMenuList(ControlP5 _cp5, String name, int _x, int _y, int _w, int _h, PFont font) {
-        bleList = new MenuList(_cp5, name, _w, _h, font);
+        bleList = new MenuList(_cp5, name, _w, _h, sansation);
         bleList.setPosition(_x, _y);
         bleList.addCallback(new CallbackListener() {
             public void controlEvent(CallbackEvent theEvent) {
@@ -792,7 +792,7 @@ class WifiBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("WIFI SHIELDS", x + padding, y + padding);
         popStyle();
@@ -804,7 +804,7 @@ class WifiBox {
         if (controlPanel.getWifiSearchStyle() == controlPanel.WIFI_STATIC) {
             pushStyle();
             fill(OPENBCI_DARKBLUE);
-            textFont(h3, 16);
+            textFont(sansation, 16);
             textAlign(LEFT, TOP);
             text("ENTER IP ADDRESS", x + padding, y + h - 24 - 12 - padding*2);
             popStyle();
@@ -821,7 +821,7 @@ class WifiBox {
             }
             pushStyle();
             fill(OPENBCI_DARKBLUE);
-            textFont(h3, 16);
+            textFont(sansation, 16);
             textAlign(LEFT, TOP);
             text(boardIpInfo, x + w/2 - textWidth(boardIpInfo)/2, y + h - padding - 46);
             popStyle();
@@ -912,7 +912,7 @@ class WifiBox {
     }
 
     private void createWifiList(ControlP5 _cp5, String name, int _x, int _y, int _w, int _h, PFont font) {
-        wifiList = new MenuList(_cp5, name, _w, _h, font);
+        wifiList = new MenuList(_cp5, name, _w, _h, sansation);
         wifiList.setPosition(_x, _y);
         wifiList.addCallback(new CallbackListener() {
             public void controlEvent(CallbackEvent theEvent) {
@@ -931,7 +931,7 @@ class WifiBox {
             .setPosition(x + 90, y + 100)
             .setCaptionLabel("")
             .setSize(w - padding*2, 26)
-            .setFont(f2)
+            .setFont(sansation)
             .setFocus(false)
             .setColor(color(26, 26, 26))
             .setColorBackground(color(255, 255, 255)) // text field bg color
@@ -999,7 +999,7 @@ class InterfaceBoxCyton {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("PICK TRANSFER PROTOCOL", x + padding, y + padding);
         popStyle();
@@ -1082,7 +1082,7 @@ class InterfaceBoxGanglion {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("PICK TRANSFER PROTOCOL", x + padding, y + padding);
         popStyle();
@@ -1189,10 +1189,10 @@ class SessionDataBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("SESSION DATA", x + padding, y + padding);
-        textFont(p4, 14);
+        textFont(sansation, 14);
         text("Name", x + padding, y + padding*2 + 14);
         popStyle();
         
@@ -1215,7 +1215,7 @@ class SessionDataBox {
             //Carefully draw some text to the left of above dropdown, otherwise this text moves when changing WiFi mode
             int extraPadding = 20;
             fill(OPENBCI_DARKBLUE);
-            textFont(p4, 14);
+            textFont(sansation, 14);
             text("Max File Duration", maxDurText_x, y + h - 24 - padding + extraPadding);
             popStyle();
         }
@@ -1228,7 +1228,7 @@ class SessionDataBox {
             .setPosition(x + 60, y + 32)
             .setCaptionLabel("")
             .setSize(187, 26)
-            .setFont(f2)
+            .setFont(sansation)
             .setFocus(false)
             .setColor(color(26, 26, 26))
             .setColorBackground(color(255, 255, 255)) // text field bg color
@@ -1286,7 +1286,7 @@ class SessionDataBox {
             .getCaptionLabel() //the caption label is the text object in the primary bar
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(settings.fileDurations[settings.defaultOBCIMaxFileSize])
-            .setFont(p4)
+            .setFont(sansation)
             .setSize(14)
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(4)
@@ -1295,7 +1295,7 @@ class SessionDataBox {
             .getValueLabel() //the value label is connected to the text objects in the dropdown item bars
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(settings.fileDurations[settings.defaultOBCIMaxFileSize])
-            .setFont(h5)
+            .setFont(sansation)
             .setSize(12) //set the font size of the item bars to 14pt
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(3) //4-pixel vertical offset to center text
@@ -1453,11 +1453,11 @@ class ChannelCountBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("CHANNEL COUNT ", x + padding, y + padding);
         fill(OPENBCI_DARKBLUE); //set color to green
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("  (" + str(nchan) + ")", x + padding + 142, y + padding); // print the channel count in green next to the box title
         popStyle();
@@ -1550,11 +1550,11 @@ class SampleRateGanglionBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("SAMPLE RATE ", x + padding, y + padding);
         fill(OPENBCI_DARKBLUE); //set color to green
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         popStyle();
 
@@ -1650,11 +1650,11 @@ class SampleRateCytonBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("SAMPLE RATE ", x + padding, y + padding);
         fill(OPENBCI_DARKBLUE); //set color to green
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         popStyle();
 
@@ -1744,11 +1744,11 @@ class SyntheticChannelCountBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("CHANNEL COUNT", x + padding, y + padding);
         fill(OPENBCI_DARKBLUE); //set color to green
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("  (" + str(nchan) + ")", x + padding + 142, y + padding); // print the channel count in green next to the box title
         popStyle();
@@ -1863,7 +1863,7 @@ class RecentPlaybackBox {
         strokeWeight(1);
         rect(x, y, w, h + recentPlaybackSL.getHeight() - padding*2.5, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("PLAYBACK HISTORY", x + padding, y + padding);
         popStyle();
@@ -1896,7 +1896,7 @@ class RecentPlaybackBox {
                 String shortFileName = playbackFile.getString("id");
                 String longFilePath = playbackFile.getString("filePath");
                 //truncate display name, if needed
-                shortFileName = shortenString(shortFileName, w-padding*2.f, h3);
+                shortFileName = shortenString(shortFileName, w-padding*2.f, sansation);
                 //store to arrays to set recent playback buttons text and function
                 shortFileNames.append(shortFileName);
                 longFilePaths.append(longFilePath);
@@ -1932,7 +1932,7 @@ class RecentPlaybackBox {
             .getCaptionLabel() //the caption label is the text object in the primary bar
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(filePickedShort)
-            .setFont(h4)
+            .setFont(sansation)
             .setSize(14)
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(4)
@@ -1941,7 +1941,7 @@ class RecentPlaybackBox {
             .getValueLabel() //the value label is connected to the text objects in the dropdown item bars
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(filePickedShort)
-            .setFont(h5)
+            .setFont(sansation)
             .setSize(12) //set the font size of the item bars to 14pt
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(3) //4-pixel vertical offset to center text
@@ -2009,12 +2009,12 @@ class GaleaBox {
 
         pushStyle();
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         //draw text labels
         text(boxLabel, x + padding, y + padding);
         textAlign(LEFT, TOP);
-        textFont(p4, 14);
+        textFont(sansation, 14);
         text(sampleRateLabel, x + padding, srList.getPosition()[1] + 2);
         text(ipAddressLabel, x + padding, ipAddressTF.getPosition()[1] + 2);
         popStyle();
@@ -2028,7 +2028,7 @@ class GaleaBox {
             .setPosition(x + w - padding*2 - 60*2, y + 16 + padding*2)
             .setCaptionLabel("")
             .setSize(120 + padding, 26)
-            .setFont(f2)
+            .setFont(sansation)
             .setFocus(false)
             .setColor(color(26, 26, 26))
             .setColorBackground(color(255, 255, 255)) // text field bg color
@@ -2080,7 +2080,7 @@ class GaleaBox {
         list.getCaptionLabel() //the caption label is the text object in the primary bar
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(enumValues[0].getName())
-            .setFont(h4)
+            .setFont(sansation)
             .setSize(14)
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(4)
@@ -2088,7 +2088,7 @@ class GaleaBox {
         list.getValueLabel() //the value label is connected to the text objects in the dropdown item bars
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(enumValues[0].getName())
-            .setFont(h5)
+            .setFont(sansation)
             .setSize(12) //set the font size of the item bars to 14pt
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(3) //4-pixel vertical offset to center text
@@ -2172,7 +2172,7 @@ class StreamingBoardBox {
             .setPosition(x + padding * 3, y + headerH + padding*2)
             .setCaptionLabel("")
             .setSize(w / 3, objectH)
-            .setFont(f2)
+            .setFont(sansation)
             .setFocus(false)
             .setColor(color(26, 26, 26))
             .setColorBackground(color(255, 255, 255)) // text field bg color
@@ -2189,7 +2189,7 @@ class StreamingBoardBox {
             .setPosition(x + padding*5 + w/2, y + headerH + padding*2)
             .setCaptionLabel("")
             .setSize(w / 5 + padding, objectH)
-            .setFont(f2)
+            .setFont(sansation)
             .setFocus(false)
             .setColor(color(26, 26, 26))
             .setColorBackground(color(255, 255, 255)) // text field bg color
@@ -2222,12 +2222,12 @@ class StreamingBoardBox {
 
         pushStyle();
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         //draw text labels
         text(boxLabel, x + padding, y + padding);
         textAlign(LEFT, TOP);
-        textFont(p4, 14);
+        textFont(sansation, 14);
         text(ipLabel, x + padding, y + padding*2 + headerH + 4);
         text(portLabel, x + w/2, y + padding*2 + headerH + 4);
         text(boardLabel, x + padding, y + padding*3 + objectH + headerH + 4);
@@ -2260,7 +2260,7 @@ class StreamingBoardBox {
         list.getCaptionLabel() //the caption label is the text object in the primary bar
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(enumValues[0].getName())
-            .setFont(h4)
+            .setFont(sansation)
             .setSize(14)
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(4)
@@ -2268,7 +2268,7 @@ class StreamingBoardBox {
         list.getValueLabel() //the value label is connected to the text objects in the dropdown item bars
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(enumValues[0].getName())
-            .setFont(h5)
+            .setFont(sansation)
             .setSize(12) //set the font size of the item bars to 14pt
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(3) //4-pixel vertical offset to center text
@@ -2335,7 +2335,7 @@ class PlaybackFileBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("PLAYBACK FILE", x + padding, y + padding);
         popStyle();
@@ -2412,7 +2412,7 @@ class SDBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("WRITE TO SD CARD?", x + padding, y + padding);
         //draw backgrounds to dropdown scrollableLists ... unfortunately ControlP5 doesn't have this by default, so we have to hack it to make it look nice...
@@ -2443,7 +2443,7 @@ class SDBox {
         sdList.getCaptionLabel() //the caption label is the text object in the primary bar
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(CytonSDMode.NO_WRITE.getName())
-            .setFont(p4)
+            .setFont(sansation)
             .setSize(14)
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(4)
@@ -2451,7 +2451,7 @@ class SDBox {
         sdList.getValueLabel() //the value label is connected to the text objects in the dropdown item bars
             .toUpperCase(false) //DO NOT AUTOSET TO UPPERCASE!!!
             .setText(CytonSDMode.NO_WRITE.getName())
-            .setFont(h5)
+            .setFont(sansation)
             .setSize(12) //set the font size of the item bars to 14pt
             .getStyle() //need to grab style before affecting the paddingTop
             .setPaddingTop(3) //4-pixel vertical offset to center text
@@ -2523,7 +2523,7 @@ class RadioConfigBox {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text("RADIO CONFIGURATION", x + padding, y + padding);
         popStyle();
@@ -2538,7 +2538,7 @@ class RadioConfigBox {
         fill(OPENBCI_DARKBLUE);
         rect(x + padding, y + padding*5 + headerH + buttonH*2 + autoscanH, w-(padding*2), statusWindowH, BUTTON_ROUNDING);
         fill(255);
-        textFont(h3, 15);
+        textFont(sansation, 15);
         text(localstring, x + padding + 5, y + padding*6 + headerH + buttonH*2 + autoscanH, w - padding*3, statusWindowH - padding);
         popStyle();
         this.last_message = localstring;
@@ -2666,7 +2666,7 @@ class ChannelPopup {
         strokeWeight(1);
         rect(x, y, w, h, BUTTON_ROUNDING);
         fill(OPENBCI_DARKBLUE);
-        textFont(h3, 16);
+        textFont(sansation, 16);
         textAlign(LEFT, TOP);
         text(title, x + padding, y + padding);
         popStyle();
