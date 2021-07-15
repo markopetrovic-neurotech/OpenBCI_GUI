@@ -250,9 +250,15 @@ class TopNav {
         }
     }
 
+    void impedanceButtonClick() {
+        if(!impedanceButton.getCaptionLabel().getText().equals(IMP_BUT_NO_CONNECTION_TEXT)) {
+            //open headplot
+        }
+    }
+
     void update() {
         averageImpedance = getAverageElecImp();
-        if (averageImpedance != 0) {
+        if (averageImpedance != 0) { //if there is a connection update Impedance % and color
             String roundedAverageImpedance = getImpedancePercentage(averageImpedance);
             impedanceButton.getCaptionLabel().setText(IMP_BUT_TEXT + roundedAverageImpedance);
             if ((averageImpedance > IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (impedanceButtonIsGreen)) {
@@ -260,8 +266,11 @@ class TopNav {
             } if ((averageImpedance < IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (!impedanceButtonIsGreen)) {
                 changeImpedanceButtonColor();
             }
-        } else {
+        } else { //if there is not connection update Impedance button text and color
             impedanceButton.getCaptionLabel().setText(IMP_BUT_NO_CONNECTION_TEXT);
+            if (impedanceButtonIsGreen) {
+                changeImpedanceButtonColor();
+            }
         }
         //ignore settings button when help dropdown is open
         settingsButton.setLock(tutorialSelector.isVisible);
@@ -367,6 +376,7 @@ class TopNav {
         shopButton.setPosition(issuesButton.getPosition()[0] - issuesButton.getWidth() - PAD_3, PAD_3);
         updateGuiVersionButton.setPosition(shopButton.getPosition()[0] - shopButton.getWidth() - PAD_3, PAD_3);
         settingsButton.setPosition(width - settingsButton.getWidth() - PAD_3, SUBNAV_BUT_Y);
+        impedanceButton.setPosition((width/2) - (IMP_BUT_W/2), SUBNAV_BUT_Y);
 
         if (systemMode == SYSTEMMODE_POSTINIT) {
             toggleDataStreamingButton.setPosition(PAD_3, SUBNAV_BUT_Y);
@@ -629,9 +639,7 @@ class TopNav {
         impedanceButton = createTNButton("impedanceButton", text, _x, _y, _w, _h, font, _fontSize, _bg, _textColor);
         impedanceButton.onRelease(new CallbackListener() {
             public void controlEvent(CallbackEvent theEvent) {
-               if (controlPanel.drawStopInstructions) {
-                   //open headplot
-               }
+               impedanceButtonClick();
             }
         });
     }
