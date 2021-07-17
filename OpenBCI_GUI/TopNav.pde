@@ -18,6 +18,7 @@ class TopNav {
     private final color SUBNAV_LIGHTBLUE = buttonsLightBlue;
     private final color IMP_BUTTON_COLOR_GREEN = color(0, 156, 8);
     private final color IMP_BUTTON_COLOR_RED = color(168, 0, 0);
+    private final color SUBNAV_BUTTON_LIGHTBLUE = color(0, 63, 145);
     private color strokeColor = OPENBCI_DARKBLUE;
 
     private ControlP5 topNav_cp5;
@@ -31,6 +32,8 @@ class TopNav {
     public Button smoothingButton;
 
     public Button impedanceButton;
+    public Button networkButton;
+    public Button timeSeriesButton;
     public Button debugButton;
     public Button tutorialsButton;
     public Button shopButton;
@@ -52,11 +55,14 @@ class TopNav {
     private final int DEBUG_BUT_W = 33;
     private final int TOPRIGHT_BUT_W = 80;
     private final int IMP_BUT_W = 185;
+    private final int NET_BUT_W = 90;
+    private final int TIME_BUT_W = 110;
     private final int DATASTREAM_BUT_W = 170;
     private final int SUBNAV_BUT_Y = 35;
     private final int SUBNAV_BUT_W = 70;
     private final int SUBNAV_BUT_H = 26;
     private final int TOPNAV_BUT_H = SUBNAV_BUT_H;
+    private final int BUTTON_PADDING = 10;
 
     private float averageImpedance;
     private final float MIN_IMPEDANCE_THREASHOLD = 15000;
@@ -64,9 +70,13 @@ class TopNav {
     private final float IMPEDANCE_COLOR_CHANGE_THEREASHOLD = 23750;
     private final String IMP_BUT_TEXT = "Impedance = ";
     private final String IMP_BUT_NO_CONNECTION_TEXT = "No Connection";
+    private final String NETWORK_BUT_TEXT = "Network";
+    private final String TIME_BUT_TEXT = "Time Series";
     
     // hack to start stream after session and components are initialized
     private Boolean startDefault = true;
+
+    WidgetManager wm;
 
     TopNav() {
         int controlPanel_W = 256;
@@ -87,7 +97,6 @@ class TopNav {
 
         //SUBNAV TOP RIGHT
         createTopNavSettingsButton("Settings", width - SUBNAV_BUT_W - PAD_3, SUBNAV_BUT_Y, SUBNAV_BUT_W, SUBNAV_BUT_H, h4, 14, SUBNAV_LIGHTBLUE, WHITE);
-        createImpButton("Impedance = ", (width/2) - (IMP_BUT_W/2), SUBNAV_BUT_Y, IMP_BUT_W, SUBNAV_BUT_H, h3, 16, IMP_BUTTON_COLOR_RED, WHITE);
         layoutSelector = new LayoutSelector();
         tutorialSelector = new TutorialSelector();
         configSelector = new ConfigSelector();
@@ -104,6 +113,10 @@ class TopNav {
             createToggleDataStreamButton(stopButton_pressToStart_txt, PAD_3, SUBNAV_BUT_Y, DATASTREAM_BUT_W, SUBNAV_BUT_H, h4, 14, isSelected_color, OPENBCI_DARKBLUE);
             createFiltNotchButton("Notch\n" + dataProcessing.getShortNotchDescription(), PAD_3*2 + toggleDataStreamingButton.getWidth(), SUBNAV_BUT_Y, SUBNAV_BUT_W, SUBNAV_BUT_H, p5, 12, SUBNAV_LIGHTBLUE, WHITE);
             createFiltBPButton("BP Filt\n" + dataProcessing.getShortFilterDescription(), PAD_3*3 + toggleDataStreamingButton.getWidth() + SUBNAV_BUT_W, SUBNAV_BUT_Y, SUBNAV_BUT_W, SUBNAV_BUT_H, p5, 12, SUBNAV_LIGHTBLUE, WHITE);
+
+            createImpButton(IMP_BUT_TEXT, (width/2) - (IMP_BUT_W/2), SUBNAV_BUT_Y, IMP_BUT_W, SUBNAV_BUT_H, h3, 16, IMP_BUTTON_COLOR_RED, WHITE);
+            createNetworkButton(NETWORK_BUT_TEXT, (width/2) + (IMP_BUT_W/2) + BUTTON_PADDING, SUBNAV_BUT_Y, NET_BUT_W, SUBNAV_BUT_H, h3, 16, SUBNAV_BUTTON_LIGHTBLUE, WHITE);
+            createTimeSeriesButton(TIME_BUT_TEXT, (width/2) + (IMP_BUT_W/2) + BUTTON_PADDING + NET_BUT_W + BUTTON_PADDING, SUBNAV_BUT_Y, TIME_BUT_W, SUBNAV_BUT_H, h3, 16, SUBNAV_BUTTON_LIGHTBLUE, WHITE);
 
             //Appears at Top Right SubNav while in a Session
             createLayoutButton("Layout", width - 3 - 60, SUBNAV_BUT_Y, 60, SUBNAV_BUT_H, h4, 14, SUBNAV_LIGHTBLUE, WHITE);
@@ -212,6 +225,10 @@ class TopNav {
     }
     */
 
+    void setWidgetManager(WidgetManager _wm) {
+        wm = _wm;
+    }
+
     float getAverageElecImp() {
         // data_elec_imp_ohm  for impedence values
         float elec_imp_average = 0;
@@ -250,28 +267,63 @@ class TopNav {
         }
     }
 
-    void impedanceButtonClick() {
-        if(!impedanceButton.getCaptionLabel().getText().equals(IMP_BUT_NO_CONNECTION_TEXT)) {
-            //open headplot
+    void updateImpedanceButton() {
+        if(impedanceButton != null) {
+            averageImpedance = getAverageElecImp();
+            //if there is a connection update Impedance % and color
+            if (averageImpedance != 0 && toggleDataStreamingButton.getCaptionLabel().getText().equals(stopButton_pressToStop_txt)) {
+                String roundedAverageImpedance = getImpedancePercentage(averageImpedance);
+                impedanceButton.getCaptionLabel().setText(IMP_BUT_TEXT + roundedAverageImpedance);
+                if ((averageImpedance > IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (impedanceButtonIsGreen)) {
+                   changeImpedanceButtonColor();
+              } if ((averageImpedance < IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (!impedanceButtonIsGreen)) {
+                  changeImpedanceButtonColor();
+             }
+            } else { //if there is not connection update Impedance button text and color
+               impedanceButton.getCaptionLabel().setText(IMP_BUT_NO_CONNECTION_TEXT);
+               if (impedanceButtonIsGreen) {
+                   changeImpedanceButtonColor();
+                }
+            }
         }
     }
 
-    void update() {
-        averageImpedance = getAverageElecImp();
-        if (averageImpedance != 0) { //if there is a connection update Impedance % and color
-            String roundedAverageImpedance = getImpedancePercentage(averageImpedance);
-            impedanceButton.getCaptionLabel().setText(IMP_BUT_TEXT + roundedAverageImpedance);
-            if ((averageImpedance > IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (impedanceButtonIsGreen)) {
-                changeImpedanceButtonColor();
-            } if ((averageImpedance < IMPEDANCE_COLOR_CHANGE_THEREASHOLD) && (!impedanceButtonIsGreen)) {
-                changeImpedanceButtonColor();
-            }
-        } else { //if there is not connection update Impedance button text and color
-            impedanceButton.getCaptionLabel().setText(IMP_BUT_NO_CONNECTION_TEXT);
-            if (impedanceButtonIsGreen) {
-                changeImpedanceButtonColor();
+    void impedanceButtonClick() {
+        //open head polt widget
+        selectWidget(0);
+    }
+
+    void networkButtonClick() {
+        //open newtowk widget
+        selectWidget(4);
+    }
+
+    void timeSeriesButtonClick() {
+        //open time series widget
+        selectWidget(6);
+    }
+
+    void selectWidget(int widgetIndex) {
+        boolean isSelectedWidgetActive = wm.widgets.get(widgetIndex).getIsActive();
+        int theContainer = -1;
+        for(int i = 0; i < wm.widgets.size(); i++){
+            if(wm.widgets.get(i).getIsActive()){ //get current container
+                theContainer = wm.widgets.get(i).currentContainer;
+                if(isSelectedWidgetActive){ //if the selected widget was already active
+                    wm.widgets.get(i).setContainer(wm.widgets.get(widgetIndex).currentContainer); //just switch the widget locations (ie swap containers)
+                } else{
+                    wm.widgets.get(i).setIsActive(false); //if not the selected widget then deactivate the current widget
+                }
             }
         }
+
+        wm.widgets.get(widgetIndex).setIsActive(true);//activate the new widget
+        wm.widgets.get(widgetIndex).setContainer(theContainer);//map it to the current container
+    }
+
+
+    void update() {
+        updateImpedanceButton();
         //ignore settings button when help dropdown is open
         settingsButton.setLock(tutorialSelector.isVisible);
 
@@ -348,6 +400,9 @@ class TopNav {
             toggleDataStreamingButton.setVisible(false);
             filtBPButton.setVisible(isSession);
             filtNotchButton.setVisible(isSession);
+            impedanceButton.setVisible(isSession);
+            networkButton.setVisible(isSession);
+            timeSeriesButton.setVisible(isSession);
             layoutButton.setVisible(false);
            
         }
@@ -378,12 +433,17 @@ class TopNav {
         shopButton.setPosition(issuesButton.getPosition()[0] - issuesButton.getWidth() - PAD_3, PAD_3);
         updateGuiVersionButton.setPosition(shopButton.getPosition()[0] - shopButton.getWidth() - PAD_3, PAD_3);
         settingsButton.setPosition(width - settingsButton.getWidth() - PAD_3, SUBNAV_BUT_Y);
-        impedanceButton.setPosition((width/2) - (IMP_BUT_W/2), SUBNAV_BUT_Y);
+    
+
 
         if (systemMode == SYSTEMMODE_POSTINIT) {
             toggleDataStreamingButton.setPosition(PAD_3, SUBNAV_BUT_Y);
             filtNotchButton.setPosition(PAD_3*2 + toggleDataStreamingButton.getWidth(), SUBNAV_BUT_Y);
             filtBPButton.setPosition(PAD_3*3 + toggleDataStreamingButton.getWidth() + SUBNAV_BUT_W, SUBNAV_BUT_Y);
+
+            impedanceButton.setPosition((width/2) - (IMP_BUT_W/2), SUBNAV_BUT_Y);
+            networkButton.setPosition((width/2) + (IMP_BUT_W/2) + BUTTON_PADDING, SUBNAV_BUT_Y);
+            timeSeriesButton.setPosition((width/2) + (IMP_BUT_W/2) + BUTTON_PADDING + NET_BUT_W + BUTTON_PADDING, SUBNAV_BUT_Y);
 
             layoutButton.setPosition(width - 3 - layoutButton.getWidth(), SUBNAV_BUT_Y);
             settingsButton.setPosition(width - (settingsButton.getWidth()*2) + PAD_3, SUBNAV_BUT_Y);
@@ -650,6 +710,24 @@ class TopNav {
         impedanceButton.onRelease(new CallbackListener() {
             public void controlEvent(CallbackEvent theEvent) {
                impedanceButtonClick();
+            }
+        });
+    }
+
+    private void createNetworkButton(String text, int _x, int _y, int _w, int _h, PFont font, int _fontSize, color _bg, color _textColor) {
+        networkButton = createTNButton("networkButton", text, _x, _y, _w, _h, font, _fontSize, _bg, _textColor);
+        networkButton.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+               networkButtonClick();
+            }
+        });
+    }
+
+    private void createTimeSeriesButton(String text, int _x, int _y, int _w, int _h, PFont font, int _fontSize, color _bg, color _textColor) {
+        timeSeriesButton = createTNButton("timeSeriesButton", text, _x, _y, _w, _h, font, _fontSize, _bg, _textColor);
+        timeSeriesButton.onRelease(new CallbackListener() {
+            public void controlEvent(CallbackEvent theEvent) {
+               timeSeriesButtonClick();
             }
         });
     }

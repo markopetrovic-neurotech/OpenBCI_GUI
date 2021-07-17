@@ -661,6 +661,7 @@ void initSystem() {
         wm = new WidgetManager(this);
         nextPlayback_millis = millis(); //used for synthesizeData and readFromFile.  This restarts the clock that keeps the playback at the right pace.
         systemMode = SYSTEMMODE_POSTINIT; //tell system it's ok to leave control panel and start interfacing GUI
+        topNav.setWidgetManager(wm);
     }
 
     verbosePrint("OpenBCI_GUI: initSystem: -- Init 4 -- " + millis());
